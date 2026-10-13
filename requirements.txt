@@ -1,15 +1,15 @@
-# TODO: after everything installs and works, run pip freeze and pin exact versions for reproducibility.
 langchain
 langchain-core
 langchain-community
+langgraph
 langchain-openai
-langchain-huggingface
-langchain-chroma
-chromadb
+langchain-google-genai
+langchain-groq
+langchain-mistralai
 python-dotenv
-pydantic
-streamlit
+faiss-cpu
+tiktoken
+fastapi
+uvicorn
 requests
-sentence-transformers
-jupyter
-ipykernel
+langchain_huggingface

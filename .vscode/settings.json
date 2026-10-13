@@ -10,13 +10,13 @@
       "text": "Use an optional lowercase scope that identifies the affected area, such as chatbot, rag, agents, docs, or deps."
     },
     {
-      "text": "Write the subject in the imperative mood, using lowercase after the colon. Prefer concise, specific wording and keep the subject at 72 characters or fewer."
+      "text": "Write exactly one concise subject line in the imperative mood, using lowercase after the colon. Keep it between 30 and 72 characters."
     },
     {
-      "text": "Do not end the subject with a period, do not use vague wording, and do not include emojis."
+      "text": "Never generate a commit body, multiple lines, bullet points, explanations, or paragraphs. Do not end the subject with a period and do not include emojis."
     },
     {
-      "text": "Add a body only when the change needs context. Leave one blank line after the subject, explain what changed and why, and wrap body lines at 72 characters."
+      "text": "Summarize the primary change only. Do not list every changed file or dependency."
     },
     {
       "text": "Return only the commit message, with no quotation marks, labels, explanations, or Markdown code fences."
