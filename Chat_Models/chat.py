@@ -25,7 +25,7 @@ print("=====================================================")
 
 model_mistral = ChatMistralAI(
     model = "ministral-14b-latest",
-    temperature = 0,
+    temperature = 0.8,
 )
 
 response_mistral = model_mistral.invoke("Write me a poem about AI")
