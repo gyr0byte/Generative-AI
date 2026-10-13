@@ -24,7 +24,7 @@ print("=====================================================")
 print("=====================================================")
 
 model_mistral = ChatMistralAI(
-    model = "mistral-7b-instruct-v0.1"
+    model = "ministral-14b-latest"
 )
 
 response_mistral = model_mistral.invoke("Explain about quantization in 2 sentences.")
