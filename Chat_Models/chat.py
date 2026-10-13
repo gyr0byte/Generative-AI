@@ -9,3 +9,13 @@ model_groq = ChatGroq(
 
 response_groq = model_groq.invoke("Explain about nepal in 2 sentences.")
 print(response_groq.content)
+print("=====================================================")
+print("=====================================================")
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+model_gemini = ChatGoogleGenerativeAI (
+    model = "gemini-3.7-flash"
+)
+
+response_gemini = model_gemini.invoke("Explain about transformer architechture in 2 sentences.")
+print(response_gemini.content)
