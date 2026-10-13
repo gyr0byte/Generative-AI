@@ -24,8 +24,9 @@ print("=====================================================")
 print("=====================================================")
 
 model_mistral = ChatMistralAI(
-    model = "ministral-14b-latest"
+    model = "ministral-14b-latest",
+    temperature = 0,
 )
 
-response_mistral = model_mistral.invoke("Explain about quantization in 2 sentences.")
+response_mistral = model_mistral.invoke("Write me a poem about AI")
 print(response_mistral.content)
