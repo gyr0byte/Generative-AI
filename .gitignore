@@ -50,6 +50,8 @@ data/raw/
 
 .vscode/
 **/.vscode/
+!.vscode/
+!.vscode/settings.json
 .idea/
 **/.idea/
 .DS_Store
