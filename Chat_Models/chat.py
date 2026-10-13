@@ -7,5 +7,5 @@ model = ChatGroq(
     model="openai/gpt-oss-20b"
 )
 
-response = model.invoke("Explain latent space in 2 sentences.")
+response = model.invoke("Explain about nepal in 2 sentences.")
 print(response.content)
