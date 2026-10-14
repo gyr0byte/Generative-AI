@@ -22,3 +22,7 @@ llm = HuggingFacePipeline.from_model_id(
 )
 
 chat_model = ChatHuggingFace(llm=llm)
+
+result = chat_model.invoke("Hello, how are you?")
+
+print("Response:", result.content)
