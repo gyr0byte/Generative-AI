@@ -5,8 +5,14 @@ load_dotenv()
 
 embeddings = GoogleGenerativeAIEmbeddings(
     model="gemini-embedding-2",
-    dimensions=256
+    dimensions=64
 )
 
-vector = embeddings.embed_query("I am going to learn GenAI")
+text = [
+    "I am going to learn GenAI",
+    "I am going to learn machine learning",
+    "I am going to learn deep learning"
+]
+
+vector = embeddings.embed_documents(text)
 print(vector)
