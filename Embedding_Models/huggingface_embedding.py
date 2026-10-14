@@ -19,3 +19,6 @@ documents = [
 ]
 
 vectors = embeddings.embed_documents(documents)
+
+print("Documents embedded:", len(vectors))
+print("First vector length:", len(vectors[0]))
