@@ -18,5 +18,5 @@ llm = HuggingFacePipeline.from_model_id(
 
 chat_model = ChatHuggingFace(llm=llm)
 
-response = chat_model.invoke("Hello, how are you?")
+response = chat_model.invoke("Tell me about data science")
 print(response.content)
