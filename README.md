@@ -54,8 +54,10 @@ This repository is actively being developed as a learning project.
 ### Implemented
 
 - Chat model examples using Groq, Google Gemini, Mistral, and Hugging Face
+- An interactive Mistral chatbot with conversation history
 - A Hugging Face hosted endpoint example
 - A local TinyLlama text-generation example
+- Google Gemini and Hugging Face embedding examples
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -63,7 +65,6 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- Embedding examples in [`Embedding_Models/`](Embedding_Models/)
 - Retrieval-augmented generation with a custom document corpus
 - Vector search using FAISS and/or another vector store
 - LangGraph-based agents and tool calling
@@ -76,8 +77,8 @@ This repository is actively being developed as a learning project.
   integrations
 - [x] **Hugging Face models:** Hosted and local text-generation models through
   LangChain
-- [ ] **Embeddings:** Convert text into vectors and compare semantic
-  similarity
+- [x] **Embeddings:** Convert text into vectors with Google Gemini and
+  Hugging Face models
 - [ ] **RAG:** Document loaders, text splitters, vector stores, and retrievers
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
@@ -138,6 +139,50 @@ The script currently sets the Hugging Face cache directory to
 want to use a different location. Local inference also requires enough disk
 space and memory for the model and its dependencies.
 
+### Interactive Mistral chatbot
+
+[`Chat_Models/chatbot.py`](Chat_Models/chatbot.py) provides an interactive
+terminal chatbot backed by `ministral-14b-latest`. It maintains the messages
+entered during the session and exits when you enter `0`.
+
+Run it with:
+
+```bash
+uv run python Chat_Models/chatbot.py
+```
+
+This example requires `MISTRAL_API_KEY`.
+
+### Embeddings
+
+[`Embedding_Models/embeddings.py`](Embedding_Models/embeddings.py) creates
+document embeddings with Google's `gemini-embedding-2` model and prints the
+resulting vectors. It uses 64 dimensions and normalized embeddings.
+
+Run it with:
+
+```bash
+uv run python Embedding_Models/embeddings.py
+```
+
+This example requires `GOOGLE_API_KEY`.
+
+[`Embedding_Models/huggingface_embedding.py`](Embedding_Models/huggingface_embedding.py)
+creates local embeddings with
+`sentence-transformers/all-MiniLM-L6-v2`. It is configured to use CUDA and
+stores Hugging Face downloads under `D:\HuggingFace` on Windows.
+
+Run it with:
+
+```bash
+uv run python Embedding_Models/huggingface_embedding.py
+```
+
+This local example does not require an API key, but it requires a compatible
+PyTorch installation and a CUDA-capable device with sufficient memory. Change
+the `device` and `HF_HOME` values in the script if your environment uses a
+different setup.
+
 ## Tech Stack
 
 ### Currently used
@@ -146,12 +191,13 @@ space and memory for the model and its dependencies.
 - **Framework:** LangChain
 - **LLM providers:** Groq, Google Gemini, Mistral, and Hugging Face
 - **Local inference:** Hugging Face Transformers and PyTorch
+- **Embeddings:** Google Gemini and Sentence Transformers
+- **Interactive CLI:** Python terminal input
 - **Configuration:** `python-dotenv`
 - **Package management:** `uv`
 
 ### Declared for upcoming examples
 
-- **Embeddings:** LangChain Hugging Face integrations and `tiktoken`
 - **Vector search:** FAISS
 - **Agent orchestration:** LangGraph
 - **API serving:** FastAPI and Uvicorn
@@ -186,9 +232,12 @@ The current chat-model example does not use retrieval yet.
 Generative-AI/
 ├── Chat_Models/
 │   ├── chat.py             # Groq, Gemini, and Mistral examples
+│   ├── chatbot.py          # Interactive Mistral chatbot
 │   ├── huggingface.py      # Hugging Face hosted endpoint example
 │   └── localmodel.py       # Local TinyLlama pipeline example
-├── Embedding_Models/       # Embedding examples planned here
+├── Embedding_Models/
+│   ├── embeddings.py       # Google Gemini embeddings example
+│   └── huggingface_embedding.py # Local Sentence Transformers embeddings
 ├── .env.example             # API-key variable template
 ├── .gitignore
 ├── .python-version          # Python 3.12
@@ -207,7 +256,9 @@ Generative-AI/
 - Git
 - [uv](https://docs.astral.sh/uv/)
 - API keys for the hosted providers used by the example
-- Sufficient disk space and memory for the local Hugging Face example
+- Sufficient disk space and memory for local Hugging Face models
+- A CUDA-capable device for `huggingface_embedding.py`, unless its device
+  setting is changed to `cpu`
 
 ### Installation with uv
 
@@ -256,7 +307,11 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Then create `.env` as described above.
+Then create `.env` as described above. The `pyproject.toml`/`uv.lock` setup
+also includes the local inference dependencies (`torch`, `transformers`, and
+`sentence-transformers`). If you use only `requirements.txt` and want to run
+the local model or local embedding examples, install those packages
+separately.
 
 ### Run the examples
 
@@ -278,6 +333,24 @@ Run the local TinyLlama example:
 uv run python Chat_Models/localmodel.py
 ```
 
+Run the interactive Mistral chatbot:
+
+```bash
+uv run python Chat_Models/chatbot.py
+```
+
+Run the Google Gemini embeddings example:
+
+```bash
+uv run python Embedding_Models/embeddings.py
+```
+
+Run the local Hugging Face embeddings example:
+
+```bash
+uv run python Embedding_Models/huggingface_embedding.py
+```
+
 When using the pip setup, activate the virtual environment first and replace
 `uv run python` with `python`:
 
@@ -285,12 +358,15 @@ When using the pip setup, activate the virtual environment first and replace
 python Chat_Models/chat.py
 python Chat_Models/huggingface.py
 python Chat_Models/localmodel.py
+python Chat_Models/chatbot.py
+python Embedding_Models/embeddings.py
+python Embedding_Models/huggingface_embedding.py
 ```
 
 ## Environment Variables
 
-Copy [`.env.example`](.env.example) to `.env`. The hosted examples use the
-following variables:
+Copy [`.env.example`](.env.example) to `.env`. The examples use the following
+variables:
 
 | Variable | Required now | Purpose |
 |---|:---:|---|
@@ -306,6 +382,9 @@ following variables:
 The local example in `localmodel.py` does not require an API key. It downloads
 the model from Hugging Face and runs inference on the local machine.
 
+The local Hugging Face embedding example also does not require an API key.
+The Google Gemini embedding example requires `GOOGLE_API_KEY`.
+
 ## Troubleshooting
 
 ### Authentication errors
@@ -317,7 +396,7 @@ needs `HUGGINGFACEHUB_API_TOKEN`.
 
 ### Running from the wrong directory
 
-Run the command from the repository root:
+Run commands from the repository root:
 
 ```bash
 uv run python Chat_Models/chat.py
@@ -329,6 +408,8 @@ Provider model names and availability can change. If a provider rejects a
 model name, check that provider's current model documentation and update
 [`Chat_Models/chat.py`](Chat_Models/chat.py).
 
+For the interactive chatbot, enter `0` to exit the session.
+
 For Hugging Face errors, verify the repository ID, your access token, and
 whether the selected hosted model is available for your account.
 
@@ -338,6 +419,16 @@ The local example downloads a model the first time it runs. If it fails,
 check your available disk space, memory, PyTorch installation, and the
 `HF_HOME` path configured in
 [`Chat_Models/localmodel.py`](Chat_Models/localmodel.py).
+
+The Hugging Face embedding example is configured for CUDA. If CUDA is not
+available, change `model_kwargs={"device": "cuda"}` to use `cpu`, noting that
+CPU inference may be slower.
+
+### Embedding errors
+
+For Google embeddings, verify `GOOGLE_API_KEY` and the selected embedding model
+availability. For local embeddings, verify that `sentence-transformers` is
+installed and that the configured device is available.
 
 ### Dependency errors
 
