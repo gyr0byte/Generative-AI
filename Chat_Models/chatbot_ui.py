@@ -1,25 +1,43 @@
 import streamlit as st
+from dotenv import load_dotenv
+from langchain_mistralai import ChatMistralAI
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
-# Page configuration
-st.set_page_config(
-    page_title="Mistral AI Chatbot",
-    page_icon="🤖",
-    layout="centered",
+load_dotenv()
+
+st.set_page_config(page_title="Mistral AI Chatbot", page_icon="🤖")
+st.title("🤖 Mistral AI Chatbot")
+
+# Model configuration from chatbot.py
+model_mistral = ChatMistralAI(
+    model="ministral-14b-latest",
+    temperature=0.8,
 )
 
-# Header Section
-st.title("🤖 Mistral AI Chatbot")
-st.caption("A witty and humorous assistant powered by Mistral AI (UI Layout Preview)")
+# Initialize conversation history with the system message
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        SystemMessage(content="You are a funny and witty assistant. You are helpful and provide information in a humorous way."),
+    ]
 
-# Chat Display Area (Static UI preview without backend execution)
-with st.chat_message("assistant"):
-    st.markdown("Hello! I am your funny and witty assistant. What would you like to chat about today?")
+# Display chat history (skipping the system message)
+for msg in st.session_state.messages:
+    if isinstance(msg, HumanMessage):
+        with st.chat_message("user"):
+            st.markdown(msg.content)
+    elif isinstance(msg, AIMessage):
+        with st.chat_message("assistant"):
+            st.markdown(msg.content)
 
-with st.chat_message("user"):
-    st.markdown("Can you give me a funny reason why computers are like humans?")
+# Handle user input and model response
+if prompt := st.chat_input("You: "):
+    # 1. Add and display user message
+    st.session_state.messages.append(HumanMessage(content=prompt))
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-with st.chat_message("assistant"):
-    st.markdown("They become completely useless the moment they lose their connection to the network!")
-
-# Chat Input Field (Pure UI element, no functionality attached)
-st.chat_input("Type your message here...")
+    # 2. Get response from Mistral AI
+    response_mistral = model_mistral.invoke(st.session_state.messages)
+    st.session_state.messages.append(AIMessage(content=response_mistral.content))
+    with st.chat_message("assistant"):
+        st.markdown(response_mistral.content)
