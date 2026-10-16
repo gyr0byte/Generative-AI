@@ -2,9 +2,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from langchain_mistralai import ChatMistralAI
+from langchain_groq import ChatGroq
 
-model = ChatMistralAI(model_name="ministral-medium-latest")
+model = ChatGroq(model_name="openai/gpt-oss-120b")
 
 response = model.invoke("Hello, how are you?")
 
