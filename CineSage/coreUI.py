@@ -50,6 +50,10 @@ with left_column:
         "around a group of astronauts who travel through a wormhole near Saturn "
         "in search of a new home for humanity as Earth faces environmental collapse."
     )
+
+    def use_example() -> None:
+        st.session_state["movie_paragraph"] = sample_paragraph
+
     paragraph = st.text_area(
         "Paste a paragraph to analyze",
         placeholder="Example: A movie description mentioning its cast, story, and reception...",
@@ -58,9 +62,11 @@ with left_column:
         label_visibility="collapsed",
     )
 
-    if st.button("Use example", use_container_width=True):
-        st.session_state["movie_paragraph"] = sample_paragraph
-        st.rerun()
+    st.button(
+        "Use example",
+        on_click=use_example,
+        use_container_width=True,
+    )
 
     extract_clicked = st.button(
         "✨ Extract movie information",
