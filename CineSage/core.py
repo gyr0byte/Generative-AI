@@ -3,7 +3,20 @@
 from functools import lru_cache
 
 from langchain_core.prompts import ChatPromptTemplate
+from pydantic import BaseModel
+from typing import Optional, List
 
+
+class Movie(BaseModel):
+  title: str
+  release_year: Optional[int]
+  genre : List[str]
+  director: Optional[str]
+  writers: Optional[List[str]]
+  producers: Optional[List[str]]
+  cast: List[str]
+  ratings: Optional[dict]
+  summary: str
 
 MOVIE_EXTRACTION_PROMPT = """\
 You are a careful movie-information extraction assistant.
