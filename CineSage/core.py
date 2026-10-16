@@ -48,9 +48,8 @@ Paragraph:
 """
 
 
-movie_extraction_prompt = ChatPromptTemplate(
-    input_variables=["paragraph"],
-    template=MOVIE_EXTRACTION_PROMPT,
+movie_extraction_prompt = ChatPromptTemplate.from_messages(
+    [("user", MOVIE_EXTRACTION_PROMPT)]
 )
 
 
