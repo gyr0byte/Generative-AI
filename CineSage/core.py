@@ -176,12 +176,25 @@ def extract_movie_information(paragraph: str) -> MovieExtraction:
         raise TypeError("The model returned an invalid movie extraction.")
 
     raw_response = result.get("raw")
-    raw_content = getattr(raw_response, "content", raw_response)
+    raw_content = getattr(raw_response, "content", "")
     if isinstance(raw_content, str) and raw_content.strip():
         raw_output = raw_content
-    elif isinstance(raw_content, list):
-        raw_output = json.dumps(raw_content, indent=2, default=str)
     else:
-        raw_output = json.dumps(raw_content, indent=2, default=str)
+        tool_calls = getattr(raw_response, "tool_calls", None)
+        additional_kwargs = getattr(raw_response, "additional_kwargs", None)
+        if tool_calls:
+            raw_output = json.dumps(
+                {"tool_calls": tool_calls},
+                indent=2,
+                default=str,
+            )
+        elif additional_kwargs:
+            raw_output = json.dumps(additional_kwargs, indent=2, default=str)
+        else:
+            raw_output = json.dumps(
+                getattr(raw_response, "model_dump", lambda: raw_response)(),
+                indent=2,
+                default=str,
+            )
 
     return MovieExtraction(raw_output=raw_output, movie=movie)
