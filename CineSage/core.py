@@ -1,6 +1,6 @@
 """Prompt templates for extracting structured movie information."""
 
-from langchain_core.prompts import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 
 MOVIE_EXTRACTION_PROMPT = """\
@@ -48,7 +48,7 @@ Paragraph:
 """
 
 
-movie_extraction_prompt = PromptTemplate(
+movie_extraction_prompt = ChatPromptTemplate(
     input_variables=["paragraph"],
     template=MOVIE_EXTRACTION_PROMPT,
 )
