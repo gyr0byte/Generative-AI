@@ -1,86 +1,119 @@
-"""Prompt and model logic for extracting useful movie information."""
+"""Movie extraction schema and model logic."""
 
 from functools import lru_cache
 
-from langchain_core.prompts import ChatPromptTemplate
-from pydantic import BaseModel
-from typing import Optional, List
+from langchain_groq import ChatGroq
+from pydantic import BaseModel, Field
+
+
+class Rating(BaseModel):
+    """A rating mentioned in the source paragraph."""
+
+    score: float | str = Field(description="The rating value exactly as stated.")
+    source: str | None = Field(
+        default=None,
+        description="The rating source, such as IMDb, if mentioned.",
+    )
 
 
 class Movie(BaseModel):
-  title: str
-  release_year: Optional[int]
-  genre : List[str]
-  director: Optional[str]
-  writers: Optional[List[str]]
-  producers: Optional[List[str]]
-  cast: List[str]
-  ratings: Optional[dict]
-  summary: str
+    """Information that can be extracted from a movie description."""
 
-MOVIE_EXTRACTION_PROMPT = """\
-You are a careful movie-information extraction assistant.
+    title: str | None = Field(
+        default=None,
+        description="The movie title, if mentioned.",
+    )
+    media_type: str | None = Field(
+        default=None,
+        description="Film, series, episode, or another media type, if mentioned.",
+    )
+    release_year: int | None = Field(
+        default=None,
+        description="The release year, if mentioned.",
+    )
+    genres: list[str] = Field(default_factory=list)
+    director: str | None = None
+    writers: list[str] = Field(default_factory=list)
+    producers: list[str] = Field(default_factory=list)
+    cast: list[str] = Field(
+        default_factory=list,
+        description="Named actors only; do not infer character names.",
+    )
+    setting: list[str] = Field(default_factory=list)
+    plot: str | None = None
+    themes: list[str] = Field(default_factory=list)
+    reception: str | None = None
+    ratings: list[Rating] = Field(default_factory=list)
+    music_or_soundtrack: list[str] = Field(default_factory=list)
+    visual_style: str | None = None
+    awards: list[str] = Field(default_factory=list)
+    keywords: list[str] = Field(default_factory=list)
+    summary: str | None = Field(
+        default=None,
+        description="A concise one- or two-sentence summary of the paragraph.",
+    )
 
-Read the paragraph and extract useful information using the exact headings
-below. Do not use outside knowledge, guess missing values, or correct possible
-errors in the source text. If a heading is not supported by the paragraph, write
-"Not mentioned".
-
-Use concise values and bullet points where appropriate. Keep names, titles,
-numbers, and wording faithful to the paragraph. Return only the extraction,
-without an introduction or conclusion.
-
-Movie name:
-Media type:
-Release year:
-Genre:
-Director:
-Writers:
-Producers:
-Cast:
-- Actor:
-  Character: (only if explicitly mentioned)
-Setting:
-Plot:
-Main themes:
-Reception:
-Ratings:
-Music or soundtrack:
-Visual style:
-Awards:
-Keywords:
-Quick summary:
-
-Extraction rules:
-- Put every named cast member under Cast.
-- Keep a rating together with its source, such as "8.6 on IMDb".
-- Distinguish Plot (the events of the story) from Quick summary (a concise
-  overview of the whole paragraph).
-- Do not add information that is not present in the paragraph.
-
-Paragraph:
-{paragraph}
-"""
-
-
-movie_extraction_prompt = ChatPromptTemplate.from_messages(
-    [("user", MOVIE_EXTRACTION_PROMPT)]
-)
+    def to_markdown(self) -> str:
+        """Render the validated schema in a readable format for the UI."""
+        sections = [
+            ("Movie name", self.title),
+            ("Media type", self.media_type),
+            ("Release year", self.release_year),
+            ("Genre", self.genres),
+            ("Director", self.director),
+            ("Writers", self.writers),
+            ("Producers", self.producers),
+            ("Cast", self.cast),
+            ("Setting", self.setting),
+            ("Plot", self.plot),
+            ("Main themes", self.themes),
+            ("Reception", self.reception),
+            (
+                "Ratings",
+                [
+                    f"{rating.score} ({rating.source})"
+                    if rating.source
+                    else str(rating.score)
+                    for rating in self.ratings
+                ],
+            ),
+            ("Music or soundtrack", self.music_or_soundtrack),
+            ("Visual style", self.visual_style),
+            ("Awards", self.awards),
+            ("Keywords", self.keywords),
+            ("Quick summary", self.summary),
+        ]
+        output: list[str] = []
+        for label, value in sections:
+            output.append(f"**{label}:**")
+            if isinstance(value, list):
+                output.extend(
+                    (f"- {item}" for item in value)
+                    if value
+                    else ("Not mentioned",)
+                )
+            else:
+                output.append(str(value) if value is not None else "Not mentioned")
+            output.append("")
+        return "\n".join(output).strip()
 
 
 @lru_cache(maxsize=1)
 def get_model():
-    """Create one reusable model instance."""
+    """Create one reusable model configured for Movie structured output."""
     from dotenv import load_dotenv
-    from langchain_groq import ChatGroq
 
     load_dotenv()
-    return ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
+    model = ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
+    return model.with_structured_output(Movie)
 
 
 def extract_movie_information(paragraph: str) -> str:
-    """Extract movie information from a paragraph with the configured model."""
-    response = get_model().invoke(
-        movie_extraction_prompt.format_messages(paragraph=paragraph)
-    )
-    return str(response.content)
+    """Extract and validate movie information from a paragraph."""
+    if not paragraph.strip():
+        raise ValueError("A non-empty movie paragraph is required.")
+
+    movie = get_model().invoke(paragraph)
+    if not isinstance(movie, Movie):
+        raise TypeError("The model returned an invalid movie extraction.")
+    return movie.to_markdown()
