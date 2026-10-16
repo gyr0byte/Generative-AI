@@ -1,8 +1,46 @@
 """Streamlit user interface for CineSage movie information extraction."""
 
+import re
+
 import streamlit as st
 
 from core import extract_movie_information
+
+
+def format_extraction(extraction: str) -> str:
+    """Put each expected extraction label on its own readable Markdown block."""
+    labels = (
+        "Movie name",
+        "Media type",
+        "Release year",
+        "Genre",
+        "Director",
+        "Writers",
+        "Producers",
+        "Cast",
+        "Setting",
+        "Plot",
+        "Main themes",
+        "Reception",
+        "Ratings",
+        "Music or soundtrack",
+        "Visual style",
+        "Awards",
+        "Keywords",
+        "Quick summary",
+    )
+    label_pattern = "|".join(re.escape(label) for label in labels)
+    formatted = re.sub(
+        rf"\s*(?=({label_pattern}):)",
+        "\n\n",
+        extraction.strip(),
+    )
+    return re.sub(
+        rf"^({label_pattern}):",
+        r"**\1:**",
+        formatted,
+        flags=re.MULTILINE,
+    )
 
 
 st.set_page_config(
@@ -98,4 +136,4 @@ if extract_clicked:
                 st.error(f"Unable to extract information: {error}")
             else:
                 st.subheader("Extracted information")
-                st.markdown(extraction)
+                st.markdown(format_extraction(extraction))
