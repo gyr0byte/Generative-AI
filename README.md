@@ -24,7 +24,6 @@
 - [Troubleshooting](#troubleshooting)
 - [Security Note](#security-note)
 - [What I'm Learning](#what-im-learning)
-- [Resources](#resources)
 - [License](#license)
 - [Author](#author)
 
@@ -511,17 +510,6 @@ remain in Git history. Revoke the key and generate a new one immediately.
 - How agents decide when to call tools
 - How to keep a human in the loop
 - How to structure, document, and ship small GenAI projects
-
-## Resources
-
-- [Sheryians GenAI playlist](https://www.youtube.com/watch?v=vwncYfhxbR0&list=PLaldQ9PzZd9oXR4PMGR4pr_DX4wFHkFwR):
-  main learning path
-- [LangChain playlist](https://www.youtube.com/watch?v=pSVk-5WemQ0&list=PLKnIA16_RmvaTbihpo4MtzVm4XOQa0ER0):
-  deeper dives on retrievers, text splitters, and runnables
-- [LangChain documentation](https://python.langchain.com/)
-- [FAISS documentation](https://faiss.ai/)
-- [Hugging Face LLM Course](https://huggingface.co/learn/llm-course)
-- [uv documentation](https://docs.astral.sh/uv/)
 
 ## License
 
