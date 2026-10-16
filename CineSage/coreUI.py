@@ -1,6 +1,7 @@
 """Streamlit user interface for CineSage movie information extraction."""
 
 import streamlit as st
+from langchain_core.exceptions import LangChainException
 
 from core import extract_movie_information
 
@@ -94,7 +95,7 @@ if extract_clicked:
         with st.spinner("Analyzing the movie paragraph..."):
             try:
                 extraction = extract_movie_information(paragraph.strip())
-            except Exception as error:
+            except (LangChainException, TypeError, ValueError) as error:
                 st.error(f"Unable to extract information: {error}")
             else:
                 st.subheader("Extracted information")

@@ -31,23 +31,62 @@ class Movie(BaseModel):
         default=None,
         description="The release year, if mentioned.",
     )
-    genres: list[str] = Field(default_factory=list)
-    director: str | None = None
-    writers: list[str] = Field(default_factory=list)
-    producers: list[str] = Field(default_factory=list)
+    genres: list[str] = Field(
+        default_factory=list,
+        description="Genres explicitly stated in the paragraph.",
+    )
+    director: str | None = Field(
+        default=None,
+        description="The director, if mentioned.",
+    )
+    writers: list[str] = Field(
+        default_factory=list,
+        description="Writers explicitly mentioned in the paragraph.",
+    )
+    producers: list[str] = Field(
+        default_factory=list,
+        description="Producers explicitly mentioned in the paragraph.",
+    )
     cast: list[str] = Field(
         default_factory=list,
         description="Named actors only; do not infer character names.",
     )
-    setting: list[str] = Field(default_factory=list)
-    plot: str | None = None
-    themes: list[str] = Field(default_factory=list)
-    reception: str | None = None
-    ratings: list[Rating] = Field(default_factory=list)
-    music_or_soundtrack: list[str] = Field(default_factory=list)
-    visual_style: str | None = None
-    awards: list[str] = Field(default_factory=list)
-    keywords: list[str] = Field(default_factory=list)
+    setting: list[str] = Field(
+        default_factory=list,
+        description="Places or locations explicitly mentioned.",
+    )
+    plot: str | None = Field(
+        default=None,
+        description="The story events described in the paragraph.",
+    )
+    themes: list[str] = Field(
+        default_factory=list,
+        description="Themes explicitly supported by the paragraph.",
+    )
+    reception: str | None = Field(
+        default=None,
+        description="Critical or audience reception explicitly mentioned.",
+    )
+    ratings: list[Rating] = Field(
+        default_factory=list,
+        description="Ratings and their sources explicitly mentioned.",
+    )
+    music_or_soundtrack: list[str] = Field(
+        default_factory=list,
+        description="Named composers, songs, or soundtrack details.",
+    )
+    visual_style: str | None = Field(
+        default=None,
+        description="Visual qualities explicitly described.",
+    )
+    awards: list[str] = Field(
+        default_factory=list,
+        description="Awards explicitly mentioned.",
+    )
+    keywords: list[str] = Field(
+        default_factory=list,
+        description="Important terms grounded in the paragraph.",
+    )
     summary: str | None = Field(
         default=None,
         description="A concise one- or two-sentence summary of the paragraph.",
