@@ -54,7 +54,8 @@ This repository is actively being developed as a learning project.
 ### Implemented
 
 - Chat model examples using Groq, Google Gemini, Mistral, and Hugging Face
-- An interactive Mistral chatbot with conversation history
+- An interactive Mistral terminal chatbot with conversation history
+- A Streamlit Mistral chatbot UI with selectable personas
 - A Hugging Face hosted endpoint example
 - A local TinyLlama text-generation example
 - Google Gemini and Hugging Face embedding examples
@@ -68,7 +69,7 @@ This repository is actively being developed as a learning project.
 - Retrieval-augmented generation with a custom document corpus
 - Vector search using FAISS and/or another vector store
 - LangGraph-based agents and tool calling
-- FastAPI and Streamlit examples
+- FastAPI examples
 - RAG over the notebooks from ML-Foundations
 
 ## Learning Roadmap
@@ -77,6 +78,8 @@ This repository is actively being developed as a learning project.
   integrations
 - [x] **Hugging Face models:** Hosted and local text-generation models through
   LangChain
+- [x] **Chatbot interfaces:** Terminal and Streamlit interfaces with
+  conversation history
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
 - [ ] **RAG:** Document loaders, text splitters, vector stores, and retrievers
@@ -139,11 +142,13 @@ The script currently sets the Hugging Face cache directory to
 want to use a different location. Local inference also requires enough disk
 space and memory for the model and its dependencies.
 
-### Interactive Mistral chatbot
+### Interactive Mistral terminal chatbot
 
 [`Chat_Models/chatbot.py`](Chat_Models/chatbot.py) provides an interactive
-terminal chatbot backed by `ministral-14b-latest`. It maintains the messages
-entered during the session and exits when you enter `0`.
+terminal chatbot backed by `ministral-14b-latest`. It uses LangChain message
+objects to preserve system, user, and assistant messages during the session.
+The chatbot starts with a funny and witty system persona and exits when you
+enter `0`.
 
 Run it with:
 
@@ -152,6 +157,26 @@ uv run python Chat_Models/chatbot.py
 ```
 
 This example requires `MISTRAL_API_KEY`.
+
+### Streamlit Mistral chatbot
+
+[`Chat_Models/chatbot_ui.py`](Chat_Models/chatbot_ui.py) provides a browser
+interface for the Mistral chatbot. It includes:
+
+- Funny, sad, angry, and flirty assistant personas
+- Persona descriptions and greetings
+- Conversation history stored in Streamlit session state
+- A button to clear and restart the current conversation
+- Styled chat messages and persona-specific avatars
+
+Start the application with:
+
+```bash
+uv run streamlit run Chat_Models/chatbot_ui.py
+```
+
+Open the local URL printed by Streamlit in your browser. This example requires
+`MISTRAL_API_KEY`.
 
 ### Embeddings
 
@@ -193,6 +218,7 @@ different setup.
 - **Local inference:** Hugging Face Transformers and PyTorch
 - **Embeddings:** Google Gemini and Sentence Transformers
 - **Interactive CLI:** Python terminal input
+- **Web UI:** Streamlit
 - **Configuration:** `python-dotenv`
 - **Package management:** `uv`
 
@@ -204,8 +230,8 @@ different setup.
 - **HTTP requests:** Requests
 - **Additional providers:** OpenAI
 
-ChromaDB, Streamlit, Tavily, and OpenWeather are part of the planned learning
-roadmap but are not currently used by the implementation in this repository.
+ChromaDB, Tavily, and OpenWeather are part of the planned learning roadmap but
+are not currently used by the implementation in this repository.
 
 ## How RAG Fits Together
 
@@ -232,7 +258,8 @@ The current chat-model example does not use retrieval yet.
 Generative-AI/
 ├── Chat_Models/
 │   ├── chat.py             # Groq, Gemini, and Mistral examples
-│   ├── chatbot.py          # Interactive Mistral chatbot
+│   ├── chatbot.py          # Interactive Mistral terminal chatbot
+│   ├── chatbot_ui.py       # Streamlit Mistral chatbot UI
 │   ├── huggingface.py      # Hugging Face hosted endpoint example
 │   └── localmodel.py       # Local TinyLlama pipeline example
 ├── Embedding_Models/
@@ -256,6 +283,7 @@ Generative-AI/
 - Git
 - [uv](https://docs.astral.sh/uv/)
 - API keys for the hosted providers used by the example
+- A browser for the Streamlit UI
 - Sufficient disk space and memory for local Hugging Face models
 - A CUDA-capable device for `huggingface_embedding.py`, unless its device
   setting is changed to `cpu`
@@ -310,8 +338,8 @@ pip install -r requirements.txt
 Then create `.env` as described above. The `pyproject.toml`/`uv.lock` setup
 also includes the local inference dependencies (`torch`, `transformers`, and
 `sentence-transformers`). If you use only `requirements.txt` and want to run
-the local model or local embedding examples, install those packages
-separately.
+the local model, local embedding, or Streamlit examples, install those
+packages and `streamlit` separately.
 
 ### Run the examples
 
@@ -339,6 +367,12 @@ Run the interactive Mistral chatbot:
 uv run python Chat_Models/chatbot.py
 ```
 
+Run the Streamlit Mistral chatbot:
+
+```bash
+uv run streamlit run Chat_Models/chatbot_ui.py
+```
+
 Run the Google Gemini embeddings example:
 
 ```bash
@@ -359,6 +393,7 @@ python Chat_Models/chat.py
 python Chat_Models/huggingface.py
 python Chat_Models/localmodel.py
 python Chat_Models/chatbot.py
+streamlit run Chat_Models/chatbot_ui.py
 python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 ```
@@ -410,8 +445,23 @@ model name, check that provider's current model documentation and update
 
 For the interactive chatbot, enter `0` to exit the session.
 
+For the Streamlit chatbot, use the persona selector in the sidebar to start
+or switch conversations, and use **Clear Conversation** to reset the current
+history.
+
 For Hugging Face errors, verify the repository ID, your access token, and
 whether the selected hosted model is available for your account.
+
+### Streamlit UI errors
+
+Start the UI from the repository root with:
+
+```bash
+uv run streamlit run Chat_Models/chatbot_ui.py
+```
+
+If the `streamlit` command is unavailable, synchronize the `uv` environment
+again with `uv sync`. The UI also requires `MISTRAL_API_KEY`.
 
 ### Local model errors
 
