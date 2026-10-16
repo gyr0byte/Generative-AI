@@ -1,5 +1,7 @@
 """Movie extraction schema and model logic."""
 
+import json
+from dataclasses import dataclass
 from functools import lru_cache
 
 from langchain_groq import ChatGroq
@@ -137,6 +139,19 @@ class Movie(BaseModel):
         return "\n".join(output).strip()
 
 
+@dataclass(frozen=True)
+class MovieExtraction:
+    """Raw, validated, and display-ready forms of one extraction."""
+
+    raw_output: str
+    movie: Movie
+
+    @property
+    def markdown(self) -> str:
+        """Return the readable representation used by the application."""
+        return self.movie.to_markdown()
+
+
 @lru_cache(maxsize=1)
 def get_model():
     """Create one reusable model configured for Movie structured output."""
@@ -144,15 +159,29 @@ def get_model():
 
     load_dotenv()
     model = ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
-    return model.with_structured_output(Movie)
+    return model.with_structured_output(Movie, include_raw=True)
 
 
-def extract_movie_information(paragraph: str) -> str:
-    """Extract and validate movie information from a paragraph."""
+def extract_movie_information(paragraph: str) -> MovieExtraction:
+    """Return raw and validated movie information from a paragraph."""
     if not paragraph.strip():
         raise ValueError("A non-empty movie paragraph is required.")
 
-    movie = get_model().invoke(paragraph)
+    result = get_model().invoke(paragraph)
+    if not isinstance(result, dict):
+        raise TypeError("The model returned an invalid extraction response.")
+
+    movie = result.get("parsed")
     if not isinstance(movie, Movie):
         raise TypeError("The model returned an invalid movie extraction.")
-    return movie.to_markdown()
+
+    raw_response = result.get("raw")
+    raw_content = getattr(raw_response, "content", raw_response)
+    if isinstance(raw_content, str) and raw_content.strip():
+        raw_output = raw_content
+    elif isinstance(raw_content, list):
+        raw_output = json.dumps(raw_content, indent=2, default=str)
+    else:
+        raw_output = json.dumps(raw_content, indent=2, default=str)
+
+    return MovieExtraction(raw_output=raw_output, movie=movie)

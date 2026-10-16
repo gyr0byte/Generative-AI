@@ -102,5 +102,11 @@ if extract_clicked:
             except (LangChainException, TypeError, ValueError) as error:
                 st.error(f"Unable to extract information: {error}")
             else:
-                st.subheader("Extracted information")
-                st.markdown(extraction)
+                st.subheader("Raw Model Output")
+                st.code(extraction.raw_output, language="json")
+
+                st.subheader("Structured Output")
+                st.json(extraction.movie.model_dump())
+
+                st.subheader("Readable Summary")
+                st.markdown(extraction.markdown)
