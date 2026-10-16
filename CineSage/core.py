@@ -1,4 +1,6 @@
-"""Prompt templates for extracting structured movie information."""
+"""Prompt and model logic for extracting useful movie information."""
+
+from functools import lru_cache
 
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -53,16 +55,19 @@ movie_extraction_prompt = ChatPromptTemplate.from_messages(
 )
 
 
-if __name__ == "__main__":
+@lru_cache(maxsize=1)
+def get_model():
+    """Create one reusable model instance."""
     from dotenv import load_dotenv
     from langchain_groq import ChatGroq
 
     load_dotenv()
+    return ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
 
-    paragraph = input("Paste a movie paragraph: ").strip()
-    if not paragraph:
-        raise SystemExit("A non-empty movie paragraph is required.")
 
-    model = ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
-    response = model.invoke(movie_extraction_prompt.format(paragraph=paragraph))
-    print(response.content)
+def extract_movie_information(paragraph: str) -> str:
+    """Extract movie information from a paragraph with the configured model."""
+    response = get_model().invoke(
+        movie_extraction_prompt.format_messages(paragraph=paragraph)
+    )
+    return str(response.content)
