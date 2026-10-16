@@ -6,52 +6,42 @@ from langchain_core.prompts import PromptTemplate
 MOVIE_EXTRACTION_PROMPT = """\
 You are a careful movie-information extraction assistant.
 
-Extract information only from the paragraph below. Do not use outside knowledge,
-guess missing values, or correct possible errors in the source text. If a value
-is not stated or cannot be determined from the paragraph, use null for a scalar
-field and [] for a list field.
+Read the paragraph and extract useful information using the exact headings
+below. Do not use outside knowledge, guess missing values, or correct possible
+errors in the source text. If a heading is not supported by the paragraph, write
+"Not mentioned".
 
-Return exactly one valid JSON object and nothing else. Use the following schema:
-{{
-  "title": "string or null",
-  "media_type": "film, series, episode, or null",
-  "release_year": "integer or null",
-  "genres": ["string"],
-  "director": "string or null",
-  "writers": ["string"],
-  "producers": ["string"],
-  "cast": [
-    {{
-      "actor": "string",
-      "character": "string or null"
-    }}
-  ],
-  "setting": "string or null",
-  "plot": "string or null",
-  "themes": ["string"],
-  "reception": "string or null",
-  "ratings": [
-    {{
-      "score": "number or string",
-      "source": "string or null"
-    }}
-  ],
-  "music": ["string"],
-  "visual_style": "string or null",
-  "awards": ["string"],
-  "keywords": ["string"],
-  "summary": "A concise one- or two-sentence summary of the paragraph"
-}}
+Use concise values and bullet points where appropriate. Keep names, titles,
+numbers, and wording faithful to the paragraph. Return only the extraction,
+without an introduction or conclusion.
+
+Movie name:
+Media type:
+Release year:
+Genre:
+Director:
+Writers:
+Producers:
+Cast:
+- Actor:
+  Character: (only if explicitly mentioned)
+Setting:
+Plot:
+Main themes:
+Reception:
+Ratings:
+Music or soundtrack:
+Visual style:
+Awards:
+Keywords:
+Quick summary:
 
 Extraction rules:
-- Keep names, titles, and numbers faithful to the paragraph.
-- Put multiple genres, people, themes, keywords, and music references in lists.
-- Use the actor field for named cast members. Set character to null unless the
-  paragraph explicitly identifies the character they play.
-- Preserve a rating together with its source, such as IMDb.
-- Distinguish plot (what happens) from summary (a concise overview of the
-  entire paragraph).
-- Do not add markdown fences, comments, or additional keys.
+- Put every named cast member under Cast.
+- Keep a rating together with its source, such as "8.6 on IMDb".
+- Distinguish Plot (the events of the story) from Quick summary (a concise
+  overview of the whole paragraph).
+- Do not add information that is not present in the paragraph.
 
 Paragraph:
 {paragraph}
