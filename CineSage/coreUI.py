@@ -138,6 +138,17 @@ st.markdown(
         padding: 1.25rem;
     }
 
+    [data-testid="stTextArea"] {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 1.15rem;
+        padding: 1.1rem;
+    }
+
+    [data-testid="stTextArea"] > label {
+        display: none;
+    }
+
     .info-card {
         height: 100%;
     }
@@ -264,7 +275,6 @@ left_column, right_column = st.columns([1.08, 0.92], gap="large")
 
 with left_column:
     st.markdown('<p class="section-label">01 · Source material</p>', unsafe_allow_html=True)
-    st.markdown('<div class="input-card">', unsafe_allow_html=True)
 
     sample_paragraph = (
         "Interstellar is a visually stunning science fiction epic directed by "
@@ -292,8 +302,6 @@ with left_column:
     button_column, _ = st.columns([0.42, 0.58])
     with button_column:
         st.button("Use example", on_click=use_example, use_container_width=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
     extract_clicked = st.button(
         "✨  Extract movie intelligence",
