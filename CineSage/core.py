@@ -63,6 +63,6 @@ if __name__ == "__main__":
     if not paragraph:
         raise SystemExit("A non-empty movie paragraph is required.")
 
-    model = ChatGroq(model_name="openai/gpt-oss-120b")
+    model = ChatGroq(model_name="openai/gpt-oss-120b", temperature=0.1)
     response = model.invoke(movie_extraction_prompt.format(paragraph=paragraph))
     print(response.content)
