@@ -55,6 +55,7 @@ This repository is actively being developed as a learning project.
 - Chat model examples using Groq, Google Gemini, Mistral, and Hugging Face
 - An interactive Mistral terminal chatbot with conversation history
 - A Streamlit Mistral chatbot UI with selectable personas
+- CineSage, a Streamlit movie-information extraction application
 - A Hugging Face hosted endpoint example
 - A local TinyLlama text-generation example
 - Google Gemini and Hugging Face embedding examples
@@ -79,6 +80,8 @@ This repository is actively being developed as a learning project.
   LangChain
 - [x] **Chatbot interfaces:** Terminal and Streamlit interfaces with
   conversation history
+- [x] **Structured extraction:** Pydantic-validated movie information
+  extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
 - [ ] **RAG:** Document loaders, text splitters, vector stores, and retrievers
@@ -207,6 +210,27 @@ PyTorch installation and a CUDA-capable device with sufficient memory. Change
 the `device` and `HF_HOME` values in the script if your environment uses a
 different setup.
 
+### CineSage movie intelligence
+
+[`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
+schema and model logic. It extracts details such as the title, media type,
+release year, genres, cast, plot, themes, ratings, awards, and a concise
+summary from a movie paragraph. The result is validated with Pydantic and can
+be rendered as readable Markdown.
+
+[`CineSage/coreUI.py`](CineSage/coreUI.py) provides the Streamlit interface.
+Paste a movie description or use the example text, then select from raw model
+output, validated structured data, or a readable Markdown presentation.
+
+The application uses Groq's `openai/gpt-oss-120b` model with structured output.
+Run it from the repository root with:
+
+```bash
+uv run streamlit run CineSage/coreUI.py
+```
+
+This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
+
 ## Tech Stack
 
 ### Currently used
@@ -216,6 +240,7 @@ different setup.
 - **LLM providers:** Groq, Google Gemini, Mistral, and Hugging Face
 - **Local inference:** Hugging Face Transformers and PyTorch
 - **Embeddings:** Google Gemini and Sentence Transformers
+- **Structured output:** Pydantic models with LangChain
 - **Interactive CLI:** Python terminal input
 - **Web UI:** Streamlit
 - **Configuration:** `python-dotenv`
@@ -264,6 +289,9 @@ Generative-AI/
 ├── Embedding_Models/
 │   ├── embeddings.py       # Google Gemini embeddings example
 │   └── huggingface_embedding.py # Local Sentence Transformers embeddings
+├── CineSage/
+│   ├── core.py             # Movie schema and extraction logic
+│   └── coreUI.py           # Streamlit movie extraction interface
 ├── .env.example             # API-key variable template
 ├── .gitignore
 ├── .python-version          # Python 3.12
@@ -283,6 +311,7 @@ Generative-AI/
 - [uv](https://docs.astral.sh/uv/)
 - API keys for the hosted providers used by the example
 - A browser for the Streamlit UI
+- A browser for the CineSage interface
 - Sufficient disk space and memory for local Hugging Face models
 - A CUDA-capable device for `huggingface_embedding.py`, unless its device
   setting is changed to `cpu`
@@ -384,6 +413,12 @@ Run the local Hugging Face embeddings example:
 uv run python Embedding_Models/huggingface_embedding.py
 ```
 
+Run the CineSage movie extraction application:
+
+```bash
+uv run streamlit run CineSage/coreUI.py
+```
+
 When using the pip setup, activate the virtual environment first and replace
 `uv run python` with `python`:
 
@@ -395,6 +430,7 @@ python Chat_Models/chatbot.py
 streamlit run Chat_Models/chatbot_ui.py
 python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
+streamlit run CineSage/coreUI.py
 ```
 
 ## Environment Variables
@@ -418,6 +454,8 @@ the model from Hugging Face and runs inference on the local machine.
 
 The local Hugging Face embedding example also does not require an API key.
 The Google Gemini embedding example requires `GOOGLE_API_KEY`.
+
+CineSage requires `GROQ_API_KEY`.
 
 ## Troubleshooting
 
@@ -462,6 +500,10 @@ uv run streamlit run Chat_Models/chatbot_ui.py
 If the `streamlit` command is unavailable, synchronize the `uv` environment
 again with `uv sync`. The UI also requires `MISTRAL_API_KEY`.
 
+For CineSage, run the application from the repository root so that
+`CineSage/coreUI.py` can import the extraction logic from `CineSage/core.py`.
+The application also requires `GROQ_API_KEY`.
+
 ### Local model errors
 
 The local example downloads a model the first time it runs. If it fails,
@@ -478,6 +520,12 @@ CPU inference may be slower.
 For Google embeddings, verify `GOOGLE_API_KEY` and the selected embedding model
 availability. For local embeddings, verify that `sentence-transformers` is
 installed and that the configured device is available.
+
+### CineSage extraction errors
+
+Enter a non-empty movie paragraph and verify that `GROQ_API_KEY` is configured.
+If structured extraction fails, check Groq model availability and the response
+shown in the raw-output tab.
 
 ### Dependency errors
 
