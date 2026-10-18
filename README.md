@@ -59,6 +59,8 @@ This repository is actively being developed as a learning project.
 - A Hugging Face hosted endpoint example
 - A local TinyLlama text-generation example
 - Google Gemini and Hugging Face embedding examples
+- Initial RAG document-loader examples for PDFs, web pages, and text files
+- A partial PDF-to-chat RAG experiment in `RAG/main.py`
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -66,7 +68,7 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- Retrieval-augmented generation with a custom document corpus
+- Completing the RAG pipeline in [`RAG/main.py`](RAG/main.py)
 - Vector search using FAISS and/or another vector store
 - LangGraph-based agents and tool calling
 - FastAPI examples
@@ -84,7 +86,8 @@ This repository is actively being developed as a learning project.
   extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
-- [ ] **RAG:** Document loaders, text splitters, vector stores, and retrievers
+- [ ] **RAG:** Document loaders are started; text splitting, vector stores,
+  retrieval, and the end-to-end pipeline remain
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -210,6 +213,53 @@ PyTorch installation and a CUDA-capable device with sufficient memory. Change
 the `device` and `HF_HOME` values in the script if your environment uses a
 different setup.
 
+### RAG document loaders
+
+The [`RAG/DocumentLoader/`](RAG/DocumentLoader/) folder contains small
+experiments with LangChain document loaders:
+
+- [`page.py`](RAG/DocumentLoader/page.py) loads a web page with
+  `WebBaseLoader`.
+- [`pdf.py`](RAG/DocumentLoader/pdf.py) loads `GRU.pdf` with
+  `PyPDFLoader`.
+- [`test.py`](RAG/DocumentLoader/test.py) loads `notes.txt` with
+  `TextLoader`.
+
+The folder also contains the source documents used by the examples:
+
+- [`GRU.pdf`](RAG/DocumentLoader/GRU.pdf)
+- [`deeplearning.pdf`](RAG/DocumentLoader/deeplearning.pdf)
+- [`notes.txt`](RAG/DocumentLoader/notes.txt)
+
+Run an individual loader from the repository root:
+
+```bash
+uv run python RAG/DocumentLoader/pdf.py
+uv run python RAG/DocumentLoader/page.py
+uv run python RAG/DocumentLoader/test.py
+```
+
+The web-page example requires an internet connection. The PDF and text
+examples use the Windows paths currently defined in their scripts, so update
+those paths if you run the project from another location or operating system.
+
+### Incomplete RAG experiment
+
+[`RAG/main.py`](RAG/main.py) is an incomplete first RAG experiment. It currently
+loads `GRU.pdf`, formats the loaded pages into a chat prompt, and sends that
+prompt to Mistral using `ministral-14b-latest`. It does not yet implement
+question-based retrieval, text splitting, embeddings, a vector store, or a
+retriever.
+
+Do not treat it as a finished RAG application. It can be run experimentally
+from the repository root with:
+
+```bash
+uv run python RAG/main.py
+```
+
+This example requires `MISTRAL_API_KEY`.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -241,6 +291,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Local inference:** Hugging Face Transformers and PyTorch
 - **Embeddings:** Google Gemini and Sentence Transformers
 - **Structured output:** Pydantic models with LangChain
+- **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
 - **Web UI:** Streamlit
 - **Configuration:** `python-dotenv`
@@ -292,6 +343,15 @@ Generative-AI/
 ├── CineSage/
 │   ├── core.py             # Movie schema and extraction logic
 │   └── coreUI.py           # Streamlit movie extraction interface
+├── RAG/
+│   ├── main.py             # Incomplete PDF-to-Mistral RAG experiment
+│   └── DocumentLoader/
+│       ├── deeplearning.pdf # PDF source document
+│       ├── GRU.pdf         # PDF source document
+│       ├── notes.txt       # Text source document
+│       ├── page.py         # WebBaseLoader example
+│       ├── pdf.py          # PyPDFLoader example
+│       └── test.py         # TextLoader example
 ├── .env.example             # API-key variable template
 ├── .gitignore
 ├── .python-version          # Python 3.12
@@ -312,6 +372,7 @@ Generative-AI/
 - API keys for the hosted providers used by the example
 - A browser for the Streamlit UI
 - A browser for the CineSage interface
+- An internet connection for the web-page loader
 - Sufficient disk space and memory for local Hugging Face models
 - A CUDA-capable device for `huggingface_embedding.py`, unless its device
   setting is changed to `cpu`
@@ -366,8 +427,9 @@ pip install -r requirements.txt
 Then create `.env` as described above. The `pyproject.toml`/`uv.lock` setup
 also includes the local inference dependencies (`torch`, `transformers`, and
 `sentence-transformers`). If you use only `requirements.txt` and want to run
-the local model, local embedding, or Streamlit examples, install those
-packages and `streamlit` separately.
+the local model, local embedding, Streamlit, or RAG PDF examples, install the
+missing packages (`torch`, `transformers`, `sentence-transformers`, `streamlit`,
+`pypdf`, and `beautifulsoup4`) separately.
 
 ### Run the examples
 
@@ -419,6 +481,12 @@ Run the CineSage movie extraction application:
 uv run streamlit run CineSage/coreUI.py
 ```
 
+Run the incomplete RAG experiment:
+
+```bash
+uv run python RAG/main.py
+```
+
 When using the pip setup, activate the virtual environment first and replace
 `uv run python` with `python`:
 
@@ -431,6 +499,7 @@ streamlit run Chat_Models/chatbot_ui.py
 python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
+python RAG/main.py
 ```
 
 ## Environment Variables
@@ -456,6 +525,8 @@ The local Hugging Face embedding example also does not require an API key.
 The Google Gemini embedding example requires `GOOGLE_API_KEY`.
 
 CineSage requires `GROQ_API_KEY`.
+
+The incomplete RAG experiment requires `MISTRAL_API_KEY`.
 
 ## Troubleshooting
 
@@ -504,6 +575,10 @@ For CineSage, run the application from the repository root so that
 `CineSage/coreUI.py` can import the extraction logic from `CineSage/core.py`.
 The application also requires `GROQ_API_KEY`.
 
+For the RAG scripts, run commands from the repository root. The loader scripts
+currently contain repository-specific Windows paths and may need path updates
+on other machines.
+
 ### Local model errors
 
 The local example downloads a model the first time it runs. If it fails,
@@ -526,6 +601,13 @@ installed and that the configured device is available.
 Enter a non-empty movie paragraph and verify that `GROQ_API_KEY` is configured.
 If structured extraction fails, check Groq model availability and the response
 shown in the raw-output tab.
+
+### RAG errors
+
+`RAG/main.py` is intentionally incomplete and currently sends the loaded PDF
+content directly to the model rather than retrieving relevant chunks. If the
+script fails, verify that `RAG/DocumentLoader/GRU.pdf` exists, that
+`MISTRAL_API_KEY` is configured, and that the PDF paths match your environment.
 
 ### Dependency errors
 
