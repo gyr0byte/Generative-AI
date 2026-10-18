@@ -1,5 +1,5 @@
 from langchain_community.document_loaders import TextLoader
 
-data = TextLoader("test.txt").load()
+data = TextLoader("D:\\Python\\Generative AI\\RAG\\DocumentLoader\\notes.txt").load()
 
-print(data)
+print(data[0].page_content)
