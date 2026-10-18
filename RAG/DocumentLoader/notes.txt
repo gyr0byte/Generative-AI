@@ -1,0 +1,104 @@
+CORRELATION VS COVARIANCE IN STATISTICS
+======================================
+
+1. COVARIANCE
+------------
+Definition:
+Covariance measures how two variables vary together.
+
+Interpretation:
+- Positive covariance: the variables tend to move in the same direction.
+- Negative covariance: the variables tend to move in opposite directions.
+- Covariance near zero: there is little or no linear co-variation; a nonlinear relationship may still exist.
+
+Sample covariance formula:
+             sum[(x_i - x_bar)(y_i - y_bar)]
+ s_xy =      --------------------------------
+                         n - 1
+
+Population covariance formula:
+             sum[(x_i - mu_x)(y_i - mu_y)]
+ Cov(X,Y) =  ------------------------------
+                           N
+
+Here, x_bar and y_bar are sample means; mu_x and mu_y are population means.
+Use n - 1 for sample covariance and N for population covariance.
+
+Key properties:
+- Its value has units equal to (units of X) x (units of Y).
+- Its magnitude depends on the variables' scales and units.
+- The sign indicates the direction of linear co-variation, but the magnitude is difficult to compare across different datasets.
+
+2. CORRELATION
+--------------
+Definition:
+Correlation measures the direction and strength of the linear relationship between two variables.
+
+Pearson sample correlation formula:
+                 s_xy
+ r =      -------------------
+          s_x * s_y
+
+Equivalently, r is sample covariance divided by the product of the sample standard deviations.
+
+Interpretation of Pearson's r:
+- r = +1: perfect positive linear relationship.
+- r = -1: perfect negative linear relationship.
+- r = 0: no linear relationship (but a nonlinear relationship may still exist).
+- Values closer to +1 or -1 indicate a stronger linear relationship; values closer to 0 indicate a weaker linear relationship.
+
+Key properties:
+- It is unitless (dimensionless).
+- It always lies between -1 and +1, inclusive.
+- It is unaffected by changes of measurement units that preserve the direction of the variables (for example, centimetres to metres).
+- Pearson correlation describes linear association and can be sensitive to outliers.
+
+3. MAIN DIFFERENCES
+-------------------
+Feature                 Covariance                  Correlation
+Meaning                 How variables vary together Direction and strength of linear association
+Range                   No fixed range              -1 to +1 for Pearson's r
+Units                   Product of variable units   Unitless
+Scale dependence        Magnitude depends on scale  Standardized; easier to compare
+Interpretation          Sign is usually most useful Sign and magnitude are interpretable
+
+4. RELATIONSHIP BETWEEN THEM
+----------------------------
+Correlation standardizes covariance:
+
+                 Cov(X,Y)
+ Corr(X,Y) = -------------------
+             SD(X) * SD(Y)
+
+For sample data, use sample covariance and sample standard deviations consistently.
+If either variable has zero standard deviation (it is constant), correlation is undefined.
+
+5. SIMPLE EXAMPLE
+-----------------
+Suppose study hours and exam scores tend to increase together.
+- Their covariance would generally be positive.
+- Their Pearson correlation would be positive, with a value closer to +1 if the relationship is strongly linear.
+
+If temperature is measured in Celsius or Fahrenheit, covariance's numerical value changes because the scale changes. Pearson correlation remains the same under a positive linear change of units.
+
+6. WHEN TO USE EACH
+-------------------
+Use covariance when:
+- You need to know whether two variables tend to vary in the same or opposite directions.
+- You are working with variance-covariance matrices or statistical models that require covariance values.
+
+Use correlation when:
+- You want an easy-to-interpret, standardized measure of linear association.
+- You want to compare the strength of linear associations measured on different scales.
+
+7. IMPORTANT CAUTIONS
+--------------------
+- Correlation does not prove causation.
+- A correlation of zero does not rule out a nonlinear relationship.
+- Outliers can strongly affect both covariance and Pearson correlation.
+- Association does not mean every observation follows the overall trend.
+
+QUICK MEMORY TIP
+----------------
+Covariance = co-movement, with a scale-dependent magnitude.
+Correlation = standardized covariance, with a value from -1 to +1.
