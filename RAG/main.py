@@ -19,7 +19,7 @@ template = ChatPromptTemplate.from_messages(
     ]
 )
 
-prompt = template.format_messages(data=docs[0].page_content)
+prompt = template.format_messages(data=docs)
 
 model = ChatMistralAI(
     model="ministral-14b-latest",
