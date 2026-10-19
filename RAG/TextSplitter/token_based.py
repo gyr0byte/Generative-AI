@@ -10,4 +10,7 @@ splitter = TokenTextSplitter(
 
 chunks = splitter.split_documents(docs)
 
-print(chunks)
+for i, chunk in enumerate(chunks):
+    print(f"Chunk {i+1}:")
+    print(chunk.page_content)
+    print("\n---\n")
