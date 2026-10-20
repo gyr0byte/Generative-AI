@@ -60,6 +60,8 @@ This repository is actively being developed as a learning project.
 - A local TinyLlama text-generation example
 - Google Gemini and Hugging Face embedding examples
 - Initial RAG document-loader examples for PDFs, web pages, and text files
+- Initial RAG text-splitting examples using character, recursive-character,
+  and token-based splitters
 - A partial PDF-to-chat RAG experiment in `RAG/main.py`
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
@@ -86,8 +88,8 @@ This repository is actively being developed as a learning project.
   extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
-- [ ] **RAG:** Document loaders are started; text splitting, vector stores,
-  retrieval, and the end-to-end pipeline remain
+- [ ] **RAG:** Document loading and text splitting are started; embeddings,
+  vector stores, retrieval, and the end-to-end pipeline remain
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -243,6 +245,37 @@ The web-page example requires an internet connection. The PDF and text
 examples use the Windows paths currently defined in their scripts, so update
 those paths if you run the project from another location or operating system.
 
+### RAG text splitters
+
+The [`RAG/TextSplitter/`](RAG/TextSplitter/) folder contains small experiments
+that split loaded documents into chunks before a future retrieval step:
+
+- [`character_based.py`](RAG/TextSplitter/character_based.py) uses
+  `CharacterTextSplitter` on `notes.txt` with a chunk size of 10 and an
+  overlap of 1.
+- [`recursive_based.py`](RAG/TextSplitter/recursive_based.py) uses
+  `RecursiveCharacterTextSplitter` on `GRU.pdf` with a chunk size of 1,000
+  characters and an overlap of 10.
+- [`token_based.py`](RAG/TextSplitter/token_based.py) uses
+  `TokenTextSplitter` on `GRU.pdf` with a chunk size of 1,000 tokens and an
+  overlap of 10.
+
+Each script prints the generated chunks and is an isolated learning example;
+the splitters are not yet connected to embeddings, a vector store, or a
+retriever.
+
+Run them from the repository root:
+
+```bash
+uv run python RAG/TextSplitter/character_based.py
+uv run python RAG/TextSplitter/recursive_based.py
+uv run python RAG/TextSplitter/token_based.py
+```
+
+The scripts currently use repository-specific Windows paths for their input
+files. Update those paths before running them on another machine or operating
+system.
+
 ### Incomplete RAG experiment
 
 [`RAG/main.py`](RAG/main.py) is an incomplete first RAG experiment. It currently
@@ -352,6 +385,10 @@ Generative-AI/
 │       ├── page.py         # WebBaseLoader example
 │       ├── pdf.py          # PyPDFLoader example
 │       └── test.py         # TextLoader example
+│   └── TextSplitter/
+│       ├── character_based.py  # CharacterTextSplitter example
+│       ├── recursive_based.py  # RecursiveCharacterTextSplitter example
+│       └── token_based.py      # TokenTextSplitter example
 ├── .env.example             # API-key variable template
 ├── .gitignore
 ├── .python-version          # Python 3.12
@@ -373,6 +410,7 @@ Generative-AI/
 - A browser for the Streamlit UI
 - A browser for the CineSage interface
 - An internet connection for the web-page loader
+- Sufficient memory for printing large document chunks
 - Sufficient disk space and memory for local Hugging Face models
 - A CUDA-capable device for `huggingface_embedding.py`, unless its device
   setting is changed to `cpu`
@@ -487,6 +525,14 @@ Run the incomplete RAG experiment:
 uv run python RAG/main.py
 ```
 
+Run the RAG text-splitting examples:
+
+```bash
+uv run python RAG/TextSplitter/character_based.py
+uv run python RAG/TextSplitter/recursive_based.py
+uv run python RAG/TextSplitter/token_based.py
+```
+
 When using the pip setup, activate the virtual environment first and replace
 `uv run python` with `python`:
 
@@ -500,6 +546,9 @@ python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
 python RAG/main.py
+python RAG/TextSplitter/character_based.py
+python RAG/TextSplitter/recursive_based.py
+python RAG/TextSplitter/token_based.py
 ```
 
 ## Environment Variables
@@ -579,6 +628,9 @@ For the RAG scripts, run commands from the repository root. The loader scripts
 currently contain repository-specific Windows paths and may need path updates
 on other machines.
 
+The text-splitting scripts also use repository-specific Windows paths. Update
+their input paths if the repository is stored elsewhere.
+
 ### Local model errors
 
 The local example downloads a model the first time it runs. If it fails,
@@ -608,6 +660,10 @@ shown in the raw-output tab.
 content directly to the model rather than retrieving relevant chunks. If the
 script fails, verify that `RAG/DocumentLoader/GRU.pdf` exists, that
 `MISTRAL_API_KEY` is configured, and that the PDF paths match your environment.
+
+The text-splitting examples print every generated chunk, so large source
+documents can produce a large amount of terminal output. Verify the source
+file paths and reduce the input document or chunk count if needed.
 
 ### Dependency errors
 
