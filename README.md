@@ -378,13 +378,13 @@ Generative-AI/
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── RAG/
 │   ├── main.py             # Incomplete PDF-to-Mistral RAG experiment
-│   └── DocumentLoader/
-│       ├── deeplearning.pdf # PDF source document
-│       ├── GRU.pdf         # PDF source document
-│       ├── notes.txt       # Text source document
-│       ├── page.py         # WebBaseLoader example
-│       ├── pdf.py          # PyPDFLoader example
-│       └── test.py         # TextLoader example
+│   ├── DocumentLoader/
+│   │   ├── deeplearning.pdf # PDF source document
+│   │   ├── GRU.pdf         # PDF source document
+│   │   ├── notes.txt       # Text source document
+│   │   ├── page.py         # WebBaseLoader example
+│   │   ├── pdf.py          # PyPDFLoader example
+│   │   └── test.py         # TextLoader example
 │   └── TextSplitter/
 │       ├── character_based.py  # CharacterTextSplitter example
 │       ├── recursive_based.py  # RecursiveCharacterTextSplitter example
