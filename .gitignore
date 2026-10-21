@@ -23,17 +23,7 @@ env/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
 
-chroma_db/
-**/chroma_db/
-.chroma/
-**/.chroma/
-chroma/
-**/chroma/
-*.sqlite3
-faiss_index/
-**/faiss_index/
-vectorstore/
-**/vectorstore/
+
 
 *.pt
 *.bin
