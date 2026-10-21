@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from langchain_community.vectorstores import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
@@ -16,8 +18,10 @@ embedding_model = GoogleGenerativeAIEmbeddings(
     model="gemini-embedding-2"
 )
 
+chroma_db_path = Path(__file__).resolve().parent.parent / "chroma_db"
+
 vecotrstore = Chroma.from_documents(
     documents = docs, 
     embedding = embedding_model,
-    persist_directory = "chroma_db"
+    persist_directory = str(chroma_db_path)
 )
