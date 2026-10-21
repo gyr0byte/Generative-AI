@@ -11,3 +11,9 @@ docs = [
     Document(page_content="Pandas is used for data analysis in Python.", metadata={"source": "DataScience_book"}),
     Document(page_content="Neural networks are used in deep learning.", metadata={"source": "DL_book"}),
 ]
+
+embedding_model = GoogleGenerativeAIEmbeddings(
+    model="gemini-embedding-2"
+)
+
+vecotrstore = Chroma.from_documents(docs, embedding_model)
