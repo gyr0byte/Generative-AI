@@ -20,8 +20,14 @@ embedding_model = GoogleGenerativeAIEmbeddings(
 
 chroma_db_path = Path(__file__).resolve().parent.parent / "chroma_db"
 
-vecotrstore = Chroma.from_documents(
+vectorstore = Chroma.from_documents(
     documents = docs, 
     embedding = embedding_model,
     persist_directory = str(chroma_db_path)
 )
+
+
+result = vectorstore.similarity_search("What is Python used for?", k=2)
+
+for r in result:
+    print(f"Content: {r.page_content}, Source: {r.metadata['source']}")
