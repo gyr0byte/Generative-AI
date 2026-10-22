@@ -16,11 +16,20 @@ data = PyPDFLoader(
 docs = data.load()
 
 # split into chunks
-text_splitter = RecursiveCharacterTextSplitter(
+splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000,
     chunk_overlap=200
 )
-splits = text_splitter.split_documents(docs)
+chunks = splitter.split_documents(docs)
 
 # create embeddings for each chunk
+embedding_model = GoogleGenerativeAIEmbeddings(
+    model="gemini-embedding-2"
+)
+
 # store into chroma db
+vectorstore = Chroma.from_documents(
+    documents=chunks,
+    embedding=embedding_model,
+    persist_directory=str(chroma_db_path)
+)
