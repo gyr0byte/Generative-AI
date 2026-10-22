@@ -62,7 +62,8 @@ This repository is actively being developed as a learning project.
 - Initial RAG document-loader examples for PDFs, web pages, and text files
 - Initial RAG text-splitting examples using character, recursive-character,
   and token-based splitters
-- A partial PDF-to-chat RAG experiment in `RAG/main.py`
+- Initial Chroma vector-store and similarity-search examples
+- A partial PDF-to-chat RAG scaffold in `RAG/main.py`
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -71,7 +72,7 @@ This repository is actively being developed as a learning project.
 ### Planned
 
 - Completing the RAG pipeline in [`RAG/main.py`](RAG/main.py)
-- Vector search using FAISS and/or another vector store
+- Connecting the Chroma vector store to a question-answering chain
 - LangGraph-based agents and tool calling
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
@@ -88,8 +89,8 @@ This repository is actively being developed as a learning project.
   extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
-- [ ] **RAG:** Document loading and text splitting are started; embeddings,
-  vector stores, retrieval, and the end-to-end pipeline remain
+- [ ] **RAG:** Document loading, text splitting, embeddings, and vector-store
+  experiments are started; the end-to-end retrieval pipeline remains
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -276,22 +277,55 @@ The scripts currently use repository-specific Windows paths for their input
 files. Update those paths before running them on another machine or operating
 system.
 
+### Chroma vector store and retrieval
+
+[`RAG/create_database.py`](RAG/create_database.py) loads
+`deeplearning.pdf`, splits it with `RecursiveCharacterTextSplitter`, creates
+local Hugging Face embeddings with
+`sentence-transformers/all-MiniLM-L6-v2`, and persists the chunks to a Chroma
+database in [`chroma_db/`](chroma_db/).
+
+Run it from the repository root with:
+
+```bash
+uv run python RAG/create_database.py
+```
+
+This example uses CUDA by default and requires a compatible PyTorch
+installation, a CUDA-capable device, and enough local storage for the model
+and database.
+
+[`RAG/VectorStore/DB.py`](RAG/VectorStore/DB.py) creates a small Chroma
+database from in-memory documents using Google's `gemini-embedding-2` model.
+It demonstrates both direct `similarity_search` and an
+`as_retriever()`-based query.
+
+Run it with:
+
+```bash
+uv run python RAG/VectorStore/DB.py
+```
+
+This example requires `GOOGLE_API_KEY`.
+
 ### Incomplete RAG experiment
 
-[`RAG/main.py`](RAG/main.py) is an incomplete first RAG experiment. It currently
-loads `GRU.pdf`, formats the loaded pages into a chat prompt, and sends that
-prompt to Mistral using `ministral-14b-latest`. It does not yet implement
-question-based retrieval, text splitting, embeddings, a vector store, or a
-retriever.
+[`RAG/main.py`](RAG/main.py) is an incomplete RAG scaffold. It currently loads
+`deeplearning.pdf`, creates recursive chunks, formats the original loaded
+pages into a chat prompt, and configures a Mistral chat model. It does not yet
+invoke the model or implement question-based retrieval, embeddings, a vector
+store, or a retriever.
 
-Do not treat it as a finished RAG application. It can be run experimentally
-from the repository root with:
+Do not treat it as a finished RAG application. Run it experimentally from the
+repository root with:
 
 ```bash
 uv run python RAG/main.py
 ```
 
-This example requires `MISTRAL_API_KEY`.
+This script currently produces no model response because the invocation step
+is not implemented yet. The configured model requires `MISTRAL_API_KEY` once
+the invocation logic is added.
 
 ### CineSage movie intelligence
 
@@ -323,6 +357,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **LLM providers:** Groq, Google Gemini, Mistral, and Hugging Face
 - **Local inference:** Hugging Face Transformers and PyTorch
 - **Embeddings:** Google Gemini and Sentence Transformers
+- **Vector stores:** Chroma
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -332,14 +367,14 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 
 ### Declared for upcoming examples
 
-- **Vector search:** FAISS
+- **Vector search:** FAISS for future experiments
 - **Agent orchestration:** LangGraph
 - **API serving:** FastAPI and Uvicorn
 - **HTTP requests:** Requests
 - **Additional providers:** OpenAI
 
-ChromaDB, Tavily, and OpenWeather are part of the planned learning roadmap but
-are not currently used by the implementation in this repository.
+Tavily and OpenWeather are part of the planned learning roadmap but are not
+currently used by the implementation in this repository.
 
 ## How RAG Fits Together
 
@@ -377,7 +412,8 @@ Generative-AI/
 │   ├── core.py             # Movie schema and extraction logic
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── RAG/
-│   ├── main.py             # Incomplete PDF-to-Mistral RAG experiment
+│   ├── create_database.py  # PDF chunks to a local Chroma database
+│   ├── main.py             # Incomplete RAG scaffold
 │   ├── DocumentLoader/
 │   │   ├── deeplearning.pdf # PDF source document
 │   │   ├── GRU.pdf         # PDF source document
@@ -385,10 +421,13 @@ Generative-AI/
 │   │   ├── page.py         # WebBaseLoader example
 │   │   ├── pdf.py          # PyPDFLoader example
 │   │   └── test.py         # TextLoader example
-│   └── TextSplitter/
-│       ├── character_based.py  # CharacterTextSplitter example
-│       ├── recursive_based.py  # RecursiveCharacterTextSplitter example
-│       └── token_based.py      # TokenTextSplitter example
+│   ├── TextSplitter/
+│   │   ├── character_based.py  # CharacterTextSplitter example
+│   │   ├── recursive_based.py  # RecursiveCharacterTextSplitter example
+│   │   └── token_based.py      # TokenTextSplitter example
+│   └── VectorStore/
+│       └── DB.py             # Chroma similarity search and retriever example
+├── chroma_db/              # Persisted Chroma database files
 ├── .env.example             # API-key variable template
 ├── .gitignore
 ├── .python-version          # Python 3.12
@@ -412,6 +451,7 @@ Generative-AI/
 - An internet connection for the web-page loader
 - Sufficient memory for printing large document chunks
 - Sufficient disk space and memory for local Hugging Face models
+- Sufficient disk space for the persisted Chroma database
 - A CUDA-capable device for `huggingface_embedding.py`, unless its device
   setting is changed to `cpu`
 
@@ -519,7 +559,19 @@ Run the CineSage movie extraction application:
 uv run streamlit run CineSage/coreUI.py
 ```
 
-Run the incomplete RAG experiment:
+Create the Chroma database from the deep-learning PDF:
+
+```bash
+uv run python RAG/create_database.py
+```
+
+Run the Chroma similarity-search example:
+
+```bash
+uv run python RAG/VectorStore/DB.py
+```
+
+Run the incomplete RAG scaffold:
 
 ```bash
 uv run python RAG/main.py
@@ -546,6 +598,8 @@ python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
 python RAG/main.py
+python RAG/create_database.py
+python RAG/VectorStore/DB.py
 python RAG/TextSplitter/character_based.py
 python RAG/TextSplitter/recursive_based.py
 python RAG/TextSplitter/token_based.py
@@ -575,7 +629,12 @@ The Google Gemini embedding example requires `GOOGLE_API_KEY`.
 
 CineSage requires `GROQ_API_KEY`.
 
-The incomplete RAG experiment requires `MISTRAL_API_KEY`.
+The incomplete RAG scaffold is configured for Mistral and will require
+`MISTRAL_API_KEY` when model invocation is implemented.
+
+The Chroma example in `RAG/VectorStore/DB.py` requires `GOOGLE_API_KEY`.
+The database-creation example uses local Hugging Face embeddings and does not
+require an API key, but it does require the configured CUDA environment.
 
 ## Troubleshooting
 
@@ -624,9 +683,9 @@ For CineSage, run the application from the repository root so that
 `CineSage/coreUI.py` can import the extraction logic from `CineSage/core.py`.
 The application also requires `GROQ_API_KEY`.
 
-For the RAG scripts, run commands from the repository root. The loader scripts
-currently contain repository-specific Windows paths and may need path updates
-on other machines.
+For the RAG scripts, run commands from the repository root. The loader,
+text-splitting, and database-creation scripts contain repository-specific
+Windows paths and may need path updates on other machines.
 
 The text-splitting scripts also use repository-specific Windows paths. Update
 their input paths if the repository is stored elsewhere.
@@ -656,10 +715,15 @@ shown in the raw-output tab.
 
 ### RAG errors
 
-`RAG/main.py` is intentionally incomplete and currently sends the loaded PDF
-content directly to the model rather than retrieving relevant chunks. If the
-script fails, verify that `RAG/DocumentLoader/GRU.pdf` exists, that
-`MISTRAL_API_KEY` is configured, and that the PDF paths match your environment.
+`RAG/main.py` is intentionally incomplete and currently does not invoke the
+configured model. If the script fails, verify that
+`RAG/DocumentLoader/deeplearning.pdf` exists and that the PDF path matches
+your environment.
+
+If `RAG/create_database.py` fails, verify the CUDA/PyTorch setup, the
+`HF_HOME` path, and the availability of
+`RAG/DocumentLoader/deeplearning.pdf`. If `RAG/VectorStore/DB.py` fails,
+verify `GOOGLE_API_KEY` and the Gemini embedding model configuration.
 
 The text-splitting examples print every generated chunk, so large source
 documents can produce a large amount of terminal output. Verify the source
