@@ -32,7 +32,3 @@ model = ChatMistralAI(
     model="ministral-14b-latest",
     temperature=0.8,
 )
-
-result = model.invoke(prompt)
-
-print(result.content)
