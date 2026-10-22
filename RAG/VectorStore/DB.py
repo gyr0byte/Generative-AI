@@ -31,3 +31,9 @@ result = vectorstore.similarity_search("What is Python used for?", k=2)
 
 for r in result:
     print(f"Content: {r.page_content}, Source: {r.metadata['source']}")
+    
+retriver = vectorstore.as_retriever()
+docs = retriver.invoke("What is Python used for?")
+
+for d in docs:
+    print(f"Content: {d.page_content}, Source: {d.metadata['source']}")
