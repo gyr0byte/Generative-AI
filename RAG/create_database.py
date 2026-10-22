@@ -1,9 +1,15 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import os
+
+# Keep model downloads off C:
+os.environ["HF_HOME"] = r"D:\HuggingFace"
+
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from pathlib import Path
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -23,8 +29,10 @@ splitter = RecursiveCharacterTextSplitter(
 chunks = splitter.split_documents(docs)
 
 # create embeddings for each chunk
-embedding_model = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-2"
+embedding_model = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    model_kwargs={"device": "cuda"},
+    encode_kwargs={"normalize_embeddings": True},
 )
 
 # store into chroma db
