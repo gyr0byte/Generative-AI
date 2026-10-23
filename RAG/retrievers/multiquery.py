@@ -18,3 +18,16 @@ docs = [
     Document(page_content="Neural networks use gradient descent for training."),
     Document(page_content="Support Vector Machines are supervised learning algorithms.")
 ]
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    model_kwargs={"device": "cuda"},
+    encode_kwargs={"normalize_embeddings": True},
+)
+
+vectorstore = Chroma.from_documents(docs, embeddings)
+
+retriever = vectorstore.as_retriever()
+
+llm = ChatMistralAI(model_name="ministral-14b-latest", temperature=0)
+
