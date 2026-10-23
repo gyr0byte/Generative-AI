@@ -22,3 +22,8 @@ embeddings = HuggingFaceEmbeddings(
 
 vectorstore = Chroma.from_documents(docs, embeddings)
 
+similarity_retriever = vectorstore.as_retriever(
+    search_type="similarity", 
+    search_kwargs={"k": 2}
+)
+
