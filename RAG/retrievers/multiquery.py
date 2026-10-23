@@ -40,3 +40,7 @@ multi_query_retriever = MultiQueryRetriever.from_llms(
 query = "What is gradient descent?"
 
 multi_query_docs = multi_query_retriever.invoke(query)
+
+print("Multi-query retrieved documents:")
+for doc in multi_query_docs:
+    print(doc.page_content)
