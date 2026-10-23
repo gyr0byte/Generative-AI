@@ -31,3 +31,12 @@ retriever = vectorstore.as_retriever()
 
 llm = ChatMistralAI(model_name="ministral-14b-latest", temperature=0)
 
+multi_query_retriever = MultiQueryRetriever.from_llms(
+    retriever=retriever, 
+    llm=llm, 
+    num_queries=3
+)
+
+query = "What is gradient descent?"
+
+multi_query_docs = multi_query_retriever.invoke(query)
