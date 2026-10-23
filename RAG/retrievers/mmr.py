@@ -35,3 +35,15 @@ for doc in similarity_docs:
     print(f"Content: {doc.page_content}")
     print("\n")
     
+mmr_retriever = vectorstore.as_retriever(
+    search_type="mmr", 
+    search_kwargs={"k": 3}
+)
+
+print("==== MMR Search Results ====\n")
+
+mmr_docs = mmr_retriever.invoke("What is gradient descent?")
+
+for doc in mmr_docs:
+    print(f"Content: {doc.page_content}")
+    print("\n")
