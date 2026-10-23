@@ -15,4 +15,5 @@ for doc in docs:
     print(f"Authors: {doc.metadata.get('Authors', 'N/A')}")
     print(f"Abstract: {doc.metadata.get('Summary', 'N/A')}")
     print(f"URL: {doc.metadata.get('Entry ID', 'N/A')}")
+    print(f"Summary: {doc.page_content}")
     print("\n")
