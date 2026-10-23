@@ -24,6 +24,14 @@ vectorstore = Chroma.from_documents(docs, embeddings)
 
 similarity_retriever = vectorstore.as_retriever(
     search_type="similarity", 
-    search_kwargs={"k": 2}
+    search_kwargs={"k": 3}
 )
 
+print("==== Similarity Search Results ====\n")
+
+similarity_docs = similarity_retriever.invoke("What is gradient descent?")
+
+for doc in similarity_docs:
+    print(f"Content: {doc.page_content}")
+    print("\n")
+    
