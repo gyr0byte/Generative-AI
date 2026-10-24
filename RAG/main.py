@@ -60,6 +60,6 @@ while True:
     prompt = prompt_template.format(context=context, question=query)
 
     # Generate the answer using the LLM
-    answer = llm.generate(prompt)
+    answer = llm.invoke(prompt)
 
     print(f"AI: {answer}")
