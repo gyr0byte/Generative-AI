@@ -63,7 +63,8 @@ This repository is actively being developed as a learning project.
 - Initial RAG text-splitting examples using character, recursive-character,
   and token-based splitters
 - Initial Chroma vector-store and similarity-search examples
-- A partial PDF-to-chat RAG scaffold in `RAG/main.py`
+- Retriever experiments using Arxiv, MMR, and multi-query retrieval
+- A minimal RAG scaffold in `RAG/main.py`
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -71,8 +72,9 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- Completing the RAG pipeline in [`RAG/main.py`](RAG/main.py)
-- Connecting the Chroma vector store to a question-answering chain
+- Building the end-to-end RAG pipeline in [`RAG/main.py`](RAG/main.py)
+- Connecting retrievers and the Chroma vector store to a question-answering
+  chain
 - LangGraph-based agents and tool calling
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
@@ -89,8 +91,8 @@ This repository is actively being developed as a learning project.
   extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
-- [ ] **RAG:** Document loading, text splitting, embeddings, and vector-store
-  experiments are started; the end-to-end retrieval pipeline remains
+- [ ] **RAG:** Document loading, text splitting, embeddings, vector stores,
+  and retriever experiments are started; the end-to-end pipeline remains
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -308,24 +310,48 @@ uv run python RAG/VectorStore/DB.py
 
 This example requires `GOOGLE_API_KEY`.
 
-### Incomplete RAG experiment
+### Retriever experiments
 
-[`RAG/main.py`](RAG/main.py) is an incomplete RAG scaffold. It currently loads
-`deeplearning.pdf`, creates recursive chunks, formats the original loaded
-pages into a chat prompt, and configures a Mistral chat model. It does not yet
-invoke the model or implement question-based retrieval, embeddings, a vector
-store, or a retriever.
+The [`RAG/retrievers/`](RAG/retrievers/) folder contains focused retrieval
+experiments:
 
-Do not treat it as a finished RAG application. Run it experimentally from the
-repository root with:
+- [`arxiv_retriver.py`](RAG/retrievers/arxiv_retriver.py) uses
+  `ArxivRetriever` to search arXiv for up to two papers about large language
+  models and prints their metadata and content.
+- [`mmr.py`](RAG/retrievers/mmr.py) compares standard similarity retrieval with
+  maximal marginal relevance (MMR) using local
+  `sentence-transformers/all-MiniLM-L6-v2` embeddings and Chroma.
+- [`multiquery.py`](RAG/retrievers/multiquery.py) uses
+  `MultiQueryRetriever` with Mistral to generate three query variations
+  before retrieving documents from a Chroma store.
+
+Run the examples from the repository root:
+
+```bash
+uv run python RAG/retrievers/arxiv_retriver.py
+uv run python RAG/retrievers/mmr.py
+uv run python RAG/retrievers/multiquery.py
+```
+
+The Arxiv example requires an internet connection. The MMR example uses CUDA
+by default for local embeddings. The multi-query example additionally
+requires `MISTRAL_API_KEY`.
+
+### Minimal RAG scaffold
+
+[`RAG/main.py`](RAG/main.py) is currently a minimal scaffold containing the
+environment-loading setup and imports for Mistral chat and Chroma. It does not
+yet load documents, invoke a model, perform retrieval, or implement a complete
+RAG pipeline.
+
+Do not treat it as a finished RAG application. It is not yet runnable as a
+complete example.
 
 ```bash
 uv run python RAG/main.py
 ```
 
-This script currently produces no model response because the invocation step
-is not implemented yet. The configured model requires `MISTRAL_API_KEY` once
-the invocation logic is added.
+The future implementation is expected to use `MISTRAL_API_KEY`.
 
 ### CineSage movie intelligence
 
@@ -413,7 +439,7 @@ Generative-AI/
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
-│   ├── main.py             # Incomplete RAG scaffold
+│   ├── main.py             # Minimal, incomplete RAG scaffold
 │   ├── DocumentLoader/
 │   │   ├── deeplearning.pdf # PDF source document
 │   │   ├── GRU.pdf         # PDF source document
@@ -425,8 +451,12 @@ Generative-AI/
 │   │   ├── character_based.py  # CharacterTextSplitter example
 │   │   ├── recursive_based.py  # RecursiveCharacterTextSplitter example
 │   │   └── token_based.py      # TokenTextSplitter example
-│   └── VectorStore/
-│       └── DB.py             # Chroma similarity search and retriever example
+│   ├── VectorStore/
+│   │   └── DB.py             # Chroma similarity search and retriever example
+│   └── retrievers/
+│       ├── arxiv_retriver.py # Arxiv paper retrieval example
+│       ├── mmr.py           # Similarity and MMR comparison
+│       └── multiquery.py    # Multi-query retrieval example
 ├── chroma_db/              # Persisted Chroma database files
 ├── .env.example             # API-key variable template
 ├── .gitignore
@@ -449,6 +479,7 @@ Generative-AI/
 - A browser for the Streamlit UI
 - A browser for the CineSage interface
 - An internet connection for the web-page loader
+- An internet connection for the Arxiv retriever
 - Sufficient memory for printing large document chunks
 - Sufficient disk space and memory for local Hugging Face models
 - Sufficient disk space for the persisted Chroma database
@@ -577,6 +608,14 @@ Run the incomplete RAG scaffold:
 uv run python RAG/main.py
 ```
 
+Run the retriever examples:
+
+```bash
+uv run python RAG/retrievers/arxiv_retriver.py
+uv run python RAG/retrievers/mmr.py
+uv run python RAG/retrievers/multiquery.py
+```
+
 Run the RAG text-splitting examples:
 
 ```bash
@@ -600,6 +639,9 @@ streamlit run CineSage/coreUI.py
 python RAG/main.py
 python RAG/create_database.py
 python RAG/VectorStore/DB.py
+python RAG/retrievers/arxiv_retriver.py
+python RAG/retrievers/mmr.py
+python RAG/retrievers/multiquery.py
 python RAG/TextSplitter/character_based.py
 python RAG/TextSplitter/recursive_based.py
 python RAG/TextSplitter/token_based.py
@@ -629,8 +671,8 @@ The Google Gemini embedding example requires `GOOGLE_API_KEY`.
 
 CineSage requires `GROQ_API_KEY`.
 
-The incomplete RAG scaffold is configured for Mistral and will require
-`MISTRAL_API_KEY` when model invocation is implemented.
+The multi-query retriever requires `MISTRAL_API_KEY`. The minimal
+[`RAG/main.py`](RAG/main.py) scaffold does not currently invoke the model.
 
 The Chroma example in `RAG/VectorStore/DB.py` requires `GOOGLE_API_KEY`.
 The database-creation example uses local Hugging Face embeddings and does not
@@ -684,7 +726,7 @@ For CineSage, run the application from the repository root so that
 The application also requires `GROQ_API_KEY`.
 
 For the RAG scripts, run commands from the repository root. The loader,
-text-splitting, and database-creation scripts contain repository-specific
+text-splitting, database, and retriever scripts contain repository-specific
 Windows paths and may need path updates on other machines.
 
 The text-splitting scripts also use repository-specific Windows paths. Update
@@ -715,15 +757,17 @@ shown in the raw-output tab.
 
 ### RAG errors
 
-`RAG/main.py` is intentionally incomplete and currently does not invoke the
-configured model. If the script fails, verify that
-`RAG/DocumentLoader/deeplearning.pdf` exists and that the PDF path matches
-your environment.
+`RAG/main.py` is intentionally incomplete and currently contains only setup
+imports. It is not expected to produce output until the pipeline is
+implemented.
 
 If `RAG/create_database.py` fails, verify the CUDA/PyTorch setup, the
 `HF_HOME` path, and the availability of
 `RAG/DocumentLoader/deeplearning.pdf`. If `RAG/VectorStore/DB.py` fails,
 verify `GOOGLE_API_KEY` and the Gemini embedding model configuration.
+
+If the retriever examples fail, verify internet access for Arxiv, CUDA for
+the local embedding examples, and `MISTRAL_API_KEY` for multi-query retrieval.
 
 The text-splitting examples print every generated chunk, so large source
 documents can produce a large amount of terminal output. Verify the source
