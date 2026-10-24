@@ -37,6 +37,8 @@ huggingface/
 data/raw/
 **/data/raw/
 *.log
+chroma_db/
+**/chroma_db/
 
 .vscode/
 **/.vscode/
