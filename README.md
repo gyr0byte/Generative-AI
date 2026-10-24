@@ -64,7 +64,8 @@ This repository is actively being developed as a learning project.
   and token-based splitters
 - Initial Chroma vector-store and similarity-search examples
 - Retriever experiments using Arxiv, MMR, and multi-query retrieval
-- A minimal RAG scaffold in `RAG/main.py`
+- An interactive PDF question-answering RAG pipeline in `RAG/main.py`
+- A Streamlit app for uploading and chatting with PDFs in `RAG/app.py`
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -72,9 +73,6 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- Building the end-to-end RAG pipeline in [`RAG/main.py`](RAG/main.py)
-- Connecting retrievers and the Chroma vector store to a question-answering
-  chain
 - LangGraph-based agents and tool calling
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
@@ -91,8 +89,8 @@ This repository is actively being developed as a learning project.
   extraction with Groq
 - [x] **Embeddings:** Convert text into vectors with Google Gemini and
   Hugging Face models
-- [ ] **RAG:** Document loading, text splitting, embeddings, vector stores,
-  and retriever experiments are started; the end-to-end pipeline remains
+- [x] **RAG:** Document loading, text splitting, embeddings, vector stores,
+  MMR retrieval, and PDF question answering
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -337,21 +335,50 @@ The Arxiv example requires an internet connection. The MMR example uses CUDA
 by default for local embeddings. The multi-query example additionally
 requires `MISTRAL_API_KEY`.
 
-### Minimal RAG scaffold
+### Interactive PDF RAG pipeline
 
-[`RAG/main.py`](RAG/main.py) is currently a minimal scaffold containing the
-environment-loading setup and imports for Mistral chat and Chroma. It does not
-yet load documents, invoke a model, perform retrieval, or implement a complete
-RAG pipeline.
+[`RAG/main.py`](RAG/main.py) provides an interactive terminal-based RAG
+pipeline. It loads the persisted Chroma database, uses local
+`sentence-transformers/all-MiniLM-L6-v2` embeddings, retrieves relevant
+documents with maximal marginal relevance (MMR), and sends the retrieved
+context to Mistral's `ministral-14b-latest` model.
 
-Do not treat it as a finished RAG application. It is not yet runnable as a
-complete example.
+The script expects the Chroma database to be created first with
+[`RAG/create_database.py`](RAG/create_database.py). It then accepts questions
+in the terminal until you enter `0`.
 
 ```bash
+uv run python RAG/create_database.py
 uv run python RAG/main.py
 ```
 
-The future implementation is expected to use `MISTRAL_API_KEY`.
+This example requires `MISTRAL_API_KEY` and a working CUDA/PyTorch environment
+for the local embedding model.
+
+### Streamlit PDF RAG app
+
+[`RAG/app.py`](RAG/app.py) provides a browser-based RAG application that lets
+you upload any PDF and ask questions about its contents. For each uploaded
+file, it:
+
+1. Loads the PDF with `PyPDFLoader`.
+2. Splits it into 1,000-character chunks with 200-character overlap.
+3. Creates local Hugging Face embeddings.
+4. Builds an in-memory Chroma vector store.
+5. Retrieves relevant chunks with MMR.
+6. Generates a grounded Markdown answer with Mistral.
+
+The uploaded file is hashed so the vector store is rebuilt only when the file
+changes during the Streamlit session. The embedding model uses CUDA when it
+is available and falls back to CPU otherwise.
+
+Start the app from the repository root:
+
+```bash
+uv run streamlit run RAG/app.py
+```
+
+This example requires `MISTRAL_API_KEY`, a browser, and a readable PDF file.
 
 ### CineSage movie intelligence
 
@@ -384,6 +411,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Local inference:** Hugging Face Transformers and PyTorch
 - **Embeddings:** Google Gemini and Sentence Transformers
 - **Vector stores:** Chroma
+- **Retrieval:** Similarity search, MMR, and multi-query retrieval
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -439,7 +467,8 @@ Generative-AI/
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
-│   ├── main.py             # Minimal, incomplete RAG scaffold
+│   ├── app.py              # Streamlit upload-and-chat PDF RAG app
+│   ├── main.py             # Interactive Chroma/Mistral PDF RAG pipeline
 │   ├── DocumentLoader/
 │   │   ├── deeplearning.pdf # PDF source document
 │   │   ├── GRU.pdf         # PDF source document
@@ -478,6 +507,7 @@ Generative-AI/
 - API keys for the hosted providers used by the example
 - A browser for the Streamlit UI
 - A browser for the CineSage interface
+- A browser for the PDF RAG app
 - An internet connection for the web-page loader
 - An internet connection for the Arxiv retriever
 - Sufficient memory for printing large document chunks
@@ -602,10 +632,16 @@ Run the Chroma similarity-search example:
 uv run python RAG/VectorStore/DB.py
 ```
 
-Run the incomplete RAG scaffold:
+Run the interactive PDF RAG pipeline:
 
 ```bash
 uv run python RAG/main.py
+```
+
+Run the Streamlit PDF RAG app:
+
+```bash
+uv run streamlit run RAG/app.py
 ```
 
 Run the retriever examples:
@@ -637,6 +673,7 @@ python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
 python RAG/main.py
+streamlit run RAG/app.py
 python RAG/create_database.py
 python RAG/VectorStore/DB.py
 python RAG/retrievers/arxiv_retriver.py
@@ -671,8 +708,10 @@ The Google Gemini embedding example requires `GOOGLE_API_KEY`.
 
 CineSage requires `GROQ_API_KEY`.
 
-The multi-query retriever requires `MISTRAL_API_KEY`. The minimal
-[`RAG/main.py`](RAG/main.py) scaffold does not currently invoke the model.
+The multi-query retriever, interactive RAG pipeline, and Streamlit PDF app
+require `MISTRAL_API_KEY`. The [`RAG/main.py`](RAG/main.py) pipeline also
+depends on the persisted Chroma database created by
+[`RAG/create_database.py`](RAG/create_database.py).
 
 The Chroma example in `RAG/VectorStore/DB.py` requires `GOOGLE_API_KEY`.
 The database-creation example uses local Hugging Face embeddings and does not
@@ -725,6 +764,10 @@ For CineSage, run the application from the repository root so that
 `CineSage/coreUI.py` can import the extraction logic from `CineSage/core.py`.
 The application also requires `GROQ_API_KEY`.
 
+For the PDF RAG app, run Streamlit from the repository root and upload a
+readable PDF. The app builds an in-memory vector store for the uploaded file;
+it does not use the persisted `chroma_db/` directory.
+
 For the RAG scripts, run commands from the repository root. The loader,
 text-splitting, database, and retriever scripts contain repository-specific
 Windows paths and may need path updates on other machines.
@@ -757,9 +800,9 @@ shown in the raw-output tab.
 
 ### RAG errors
 
-`RAG/main.py` is intentionally incomplete and currently contains only setup
-imports. It is not expected to produce output until the pipeline is
-implemented.
+If `RAG/main.py` fails, run `RAG/create_database.py` first so that
+`chroma_db/` exists. Verify the CUDA/PyTorch setup, the `HF_HOME` path, and
+that `MISTRAL_API_KEY` is configured.
 
 If `RAG/create_database.py` fails, verify the CUDA/PyTorch setup, the
 `HF_HOME` path, and the availability of
