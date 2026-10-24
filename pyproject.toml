@@ -31,6 +31,7 @@ dependencies = [
     "streamlit>=1.66.0",
     "tiktoken>=0.14.0",
     "torch>=2.14.1",
+    "torchvision>=0.29.1",
     "transformers>=5.19.0",
     "uvicorn>=0.54.0",
 ]
