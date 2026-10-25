@@ -30,4 +30,5 @@ parallel_runnable = RunnableParallel({
 })
 
 result = parallel_runnable.invoke({"topic": toppic})
-print(result)
+print(result['short'])
+print(result['detailed'])
