@@ -12,7 +12,7 @@ model = ChatMistralAI(
 parser = StrOutputParser()
 
 # Two different prompts
-short_prompts = ChatPromptTemplate.from_template(
+short_prompt = ChatPromptTemplate.from_template(
     "Explain {topic} in 1-2 lines."
 )
 
@@ -22,3 +22,8 @@ detailed_prompt = ChatPromptTemplate.from_template(
 
 # Input
 toppic = "Machine Learning"
+
+parallel_runnable = {
+    "short": short_prompt | model | parser,
+    "detailed": detailed_prompt | model | parser
+}
