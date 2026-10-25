@@ -27,3 +27,6 @@ parallel_runnable = {
     "short": short_prompt | model | parser,
     "detailed": detailed_prompt | model | parser
 }
+
+result = parallel_runnable.invoke({"topic": toppic})
+print(result)
