@@ -18,13 +18,8 @@ model = ChatMistralAI(
 # Output Parser
 parser = StrOutputParser()
 
-# Format the prompt
-formatted_prompt = prompt.format_messages(topic="quantum computing")
+# Using runnable 
+runnable = prompt | model | parser
 
-# Call the model manually
-response = model.invoke(formatted_prompt)
-
-# Parse the output manually
-final_output = parser.parse(response)
-
-print(final_output)
+result = runnable.invoke("Quantum Computing")
+print(result)
