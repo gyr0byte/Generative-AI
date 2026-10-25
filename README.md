@@ -66,6 +66,7 @@ This repository is actively being developed as a learning project.
 - Retriever experiments using Arxiv, MMR, and multi-query retrieval
 - An interactive PDF question-answering RAG pipeline in `RAG/main.py`
 - A Streamlit app for uploading and chatting with PDFs in `RAG/app.py`
+- A LangChain runnable sequence using prompt, model, and output parser
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -91,6 +92,7 @@ This repository is actively being developed as a learning project.
   Hugging Face models
 - [x] **RAG:** Document loading, text splitting, embeddings, vector stores,
   MMR retrieval, and PDF question answering
+- [x] **Runnables:** Composable LangChain prompt-model-parser sequences
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -380,6 +382,27 @@ uv run streamlit run RAG/app.py
 
 This example requires `MISTRAL_API_KEY`, a browser, and a readable PDF file.
 
+### LangChain runnable sequence
+
+[`Runnables/sequence_runnable.py`](Runnables/sequence_runnable.py) demonstrates
+LangChain Expression Language by composing a prompt template, Mistral chat
+model, and `StrOutputParser` into one runnable sequence:
+
+```text
+Prompt -> Chat model -> String output parser
+```
+
+The example asks Mistral to explain quantum computing in simple words and
+prints the parsed string result.
+
+Run it from the repository root with:
+
+```bash
+uv run python Runnables/sequence_runnable.py
+```
+
+This example requires `MISTRAL_API_KEY`.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -412,6 +435,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Embeddings:** Google Gemini and Sentence Transformers
 - **Vector stores:** Chroma
 - **Retrieval:** Similarity search, MMR, and multi-query retrieval
+- **Composition:** LangChain Expression Language (LCEL) runnables
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -465,6 +489,8 @@ Generative-AI/
 ├── CineSage/
 │   ├── core.py             # Movie schema and extraction logic
 │   └── coreUI.py           # Streamlit movie extraction interface
+├── Runnables/
+│   └── sequence_runnable.py # Prompt-model-parser runnable sequence
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -620,6 +646,12 @@ Run the CineSage movie extraction application:
 uv run streamlit run CineSage/coreUI.py
 ```
 
+Run the LangChain runnable sequence:
+
+```bash
+uv run python Runnables/sequence_runnable.py
+```
+
 Create the Chroma database from the deep-learning PDF:
 
 ```bash
@@ -672,6 +704,7 @@ streamlit run Chat_Models/chatbot_ui.py
 python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
+python Runnables/sequence_runnable.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
