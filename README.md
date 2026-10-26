@@ -668,7 +668,7 @@ Run the CineSage movie extraction application:
 uv run streamlit run CineSage/coreUI.py
 ```
 
-Run the LangChain runnable sequence:
+Run the LangChain runnable examples:
 
 ```bash
 uv run python Runnables/sequence_runnable.py
