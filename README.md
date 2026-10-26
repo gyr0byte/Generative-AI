@@ -67,6 +67,7 @@ This repository is actively being developed as a learning project.
 - An interactive PDF question-answering RAG pipeline in `RAG/main.py`
 - A Streamlit app for uploading and chatting with PDFs in `RAG/app.py`
 - A LangChain runnable sequence using prompt, model, and output parser
+- A parallel LangChain runnable with short and detailed response branches
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -92,7 +93,8 @@ This repository is actively being developed as a learning project.
   Hugging Face models
 - [x] **RAG:** Document loading, text splitting, embeddings, vector stores,
   MMR retrieval, and PDF question answering
-- [x] **Runnables:** Composable LangChain prompt-model-parser sequences
+- [x] **Runnables:** Composable LangChain prompt-model-parser sequences and
+  parallel branches
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -403,6 +405,25 @@ uv run python Runnables/sequence_runnable.py
 
 This example requires `MISTRAL_API_KEY`.
 
+### Parallel runnable branches
+
+[`Runnables/parallel_runnable.py`](Runnables/parallel_runnable.py) demonstrates
+how to compose multiple LangChain runnable branches with
+`RunnableParallel`. Each branch uses `RunnableLambda` to select its input,
+then passes the selected topic through its own prompt, Mistral chat model, and
+`StrOutputParser`:
+
+- The `short` branch explains Machine Learning in one or two lines.
+- The `detailed` branch explains Deep Learning in more detail.
+
+Run it from the repository root with:
+
+```bash
+uv run python Runnables/parallel_runnable.py
+```
+
+This example requires `MISTRAL_API_KEY`.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -490,7 +511,8 @@ Generative-AI/
 │   ├── core.py             # Movie schema and extraction logic
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── Runnables/
-│   └── sequence_runnable.py # Prompt-model-parser runnable sequence
+│   ├── sequence_runnable.py # Prompt-model-parser runnable sequence
+│   └── parallel_runnable.py # Parallel short and detailed response branches
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -650,6 +672,7 @@ Run the LangChain runnable sequence:
 
 ```bash
 uv run python Runnables/sequence_runnable.py
+uv run python Runnables/parallel_runnable.py
 ```
 
 Create the Chroma database from the deep-learning PDF:
@@ -705,6 +728,7 @@ python Embedding_Models/embeddings.py
 python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
 python Runnables/sequence_runnable.py
+python Runnables/parallel_runnable.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
