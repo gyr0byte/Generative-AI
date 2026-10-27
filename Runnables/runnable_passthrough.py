@@ -30,4 +30,5 @@ seq2 = RunnableParallel({
 chain = seq | seq2 
 
 result = chain.invoke({"topic": "Write a Python code to calculate the factorial of a number."})
-print(result)
+print(result["code"])
+print(result["explain"])
