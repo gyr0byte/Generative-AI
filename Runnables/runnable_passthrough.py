@@ -27,5 +27,7 @@ seq2 = RunnableParallel({
     "explain": RunnablePassthrough() | explain_prompt | model | parser
 })
 
-result = seq.invoke({"topic": "Write a Python code to calculate the factorial of a number."})
+chain = seq | seq2 
+
+result = chain.invoke({"topic": "Write a Python code to calculate the factorial of a number."})
 print(result)
