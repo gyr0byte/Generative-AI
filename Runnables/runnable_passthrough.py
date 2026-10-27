@@ -21,3 +21,7 @@ explain_prompt = ChatPromptTemplate.from_messages([
     ("human", "Explain the following code in simple terms:\n {code}")
 ])
 
+seq = code_prompt | model | parser | explain_prompt | model | parser
+
+result = seq.invoke({"topic": "Write a Python code to calculate the factorial of a number."})
+print(result)
