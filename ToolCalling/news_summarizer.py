@@ -19,3 +19,11 @@ prompt = ChatPromptTemplate.from_template(
     Please provide the summary in 3-4 sentences.\n\nArticle: {news}\n\nSummary:"""
 )
 
+chain = prompt | llm | parser
+
+news_result = search_tool.run("latest news on Nepal October 2026")
+
+summary = chain.invoke({"news": news_result})
+
+print("News Summary:")
+print(summary)
