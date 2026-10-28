@@ -69,6 +69,7 @@ This repository is actively being developed as a learning project.
 - A LangChain runnable sequence using prompt, model, and output parser
 - A parallel LangChain runnable with short and detailed response branches
 - A passthrough runnable that forwards generated code for explanation
+- A Tavily-powered news search and Mistral summarization example
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -76,7 +77,7 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- LangGraph-based agents and tool calling
+- LangGraph-based agents and model-driven tool calling
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
 
@@ -96,6 +97,8 @@ This repository is actively being developed as a learning project.
   MMR retrieval, and PDF question answering
 - [x] **Runnables:** Composable LangChain prompt-model-parser sequences,
   parallel branches, and passthrough data flow
+- [x] **Web search and summarization:** Search current articles with Tavily
+  and summarize results with Mistral
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -444,6 +447,25 @@ uv run python Runnables/runnable_passthrough.py
 
 This example requires `MISTRAL_API_KEY`.
 
+### News search and summarization
+
+[`ToolCalling/news_summarizer.py`](ToolCalling/news_summarizer.py) combines a
+Tavily web-search tool with a Mistral summarization chain. It searches for the
+latest news about Nepal, passes up to five search results to Mistral, and
+prints a concise three- to four-sentence summary.
+
+The script invokes the search tool directly before sending the results to the
+prompt-model-parser chain; it is a tool-integration example rather than a
+model-driven agent loop.
+
+Run it from the repository root with:
+
+```bash
+uv run python ToolCalling/news_summarizer.py
+```
+
+This example requires `TAVILY_API_KEY`, `MISTRAL_API_KEY`, and internet access.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -477,6 +499,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Vector stores:** Chroma
 - **Retrieval:** Similarity search, MMR, and multi-query retrieval
 - **Composition:** LangChain Expression Language (LCEL) runnables
+- **Web search:** Tavily search tools
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -492,8 +515,8 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **HTTP requests:** Requests
 - **Additional providers:** OpenAI
 
-Tavily and OpenWeather are part of the planned learning roadmap but are not
-currently used by the implementation in this repository.
+OpenWeather is part of the planned learning roadmap but is not currently used
+by the implementation in this repository.
 
 ## How RAG Fits Together
 
@@ -534,6 +557,8 @@ Generative-AI/
 │   ├── sequence_runnable.py # Prompt-model-parser runnable sequence
 │   ├── parallel_runnable.py # Parallel short and detailed response branches
 │   └── runnable_passthrough.py # Preserve and explain generated code
+├── ToolCalling/
+│   └── news_summarizer.py   # Tavily search and Mistral news summarization
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -697,6 +722,12 @@ uv run python Runnables/parallel_runnable.py
 uv run python Runnables/runnable_passthrough.py
 ```
 
+Run the news search and summarization example:
+
+```bash
+uv run python ToolCalling/news_summarizer.py
+```
+
 Create the Chroma database from the deep-learning PDF:
 
 ```bash
@@ -752,6 +783,7 @@ streamlit run CineSage/coreUI.py
 python Runnables/sequence_runnable.py
 python Runnables/parallel_runnable.py
 python Runnables/runnable_passthrough.py
+python ToolCalling/news_summarizer.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
@@ -776,7 +808,7 @@ variables:
 | `MISTRAL_API_KEY` | Yes | Mistral chat model |
 | `OPENAI_API_KEY` | No | Planned OpenAI examples |
 | `HUGGINGFACEHUB_API_TOKEN` | Yes for `huggingface.py` | Hugging Face hosted inference |
-| `TAVILY_API_KEY` | No | Planned web-search tools |
+| `TAVILY_API_KEY` | Yes for `ToolCalling/news_summarizer.py` | Tavily web search |
 | `OPENWEATHER_API_KEY` | No | Planned weather tools |
 | `LANGCHAIN_API_KEY` | No | Optional LangSmith tracing |
 
@@ -797,6 +829,9 @@ The Chroma example in `RAG/VectorStore/DB.py` requires `GOOGLE_API_KEY`.
 The database-creation example uses local Hugging Face embeddings and does not
 require an API key, but it does require the configured CUDA environment.
 
+The news summarizer requires both `TAVILY_API_KEY` and `MISTRAL_API_KEY`, plus
+internet access for the live search.
+
 ## Troubleshooting
 
 ### Authentication errors
@@ -805,6 +840,14 @@ Check that `.env` exists in the repository root and that the variable names
 match [`.env.example`](.env.example). The hosted provider example needs the
 Groq, Google, and Mistral keys. The Hugging Face hosted example additionally
 needs `HUGGINGFACEHUB_API_TOKEN`.
+
+The news summarizer additionally needs `TAVILY_API_KEY`.
+
+### Web-search failures
+
+The news summarizer depends on Tavily and an active internet connection. If
+search fails, verify the Tavily key, check the provider status, and retry the
+script from the repository root.
 
 ### Running from the wrong directory
 
