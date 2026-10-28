@@ -70,6 +70,7 @@ This repository is actively being developed as a learning project.
 - A parallel LangChain runnable with short and detailed response branches
 - A passthrough runnable that forwards generated code for explanation
 - A Tavily-powered news search and Mistral summarization example
+- A custom LangChain tool created with the `@tool` decorator
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -99,6 +100,7 @@ This repository is actively being developed as a learning project.
   parallel branches, and passthrough data flow
 - [x] **Web search and summarization:** Search current articles with Tavily
   and summarize results with Mistral
+- [x] **Custom tools:** Define, invoke, and inspect a typed LangChain tool
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -466,6 +468,25 @@ uv run python ToolCalling/news_summarizer.py
 
 This example requires `TAVILY_API_KEY`, `MISTRAL_API_KEY`, and internet access.
 
+### Creating a custom LangChain tool
+
+[`ToolCalling/self_made_tool.py`](ToolCalling/self_made_tool.py) demonstrates
+how to turn a typed Python function into a LangChain tool with the `@tool`
+decorator. The `get_greeting` tool:
+
+- Accepts a `name: str` argument.
+- Returns a personalized greeting.
+- Can be invoked with a structured input dictionary.
+- Exposes its generated name, description, and argument schema for inspection.
+
+Run it from the repository root with:
+
+```bash
+uv run python ToolCalling/self_made_tool.py
+```
+
+This example runs locally and does not require an API key.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -558,7 +579,8 @@ Generative-AI/
 │   ├── parallel_runnable.py # Parallel short and detailed response branches
 │   └── runnable_passthrough.py # Preserve and explain generated code
 ├── ToolCalling/
-│   └── news_summarizer.py   # Tavily search and Mistral news summarization
+│   ├── news_summarizer.py   # Tavily search and Mistral news summarization
+│   └── self_made_tool.py    # Custom greeting tool with @tool
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -728,6 +750,12 @@ Run the news search and summarization example:
 uv run python ToolCalling/news_summarizer.py
 ```
 
+Run the custom LangChain tool example:
+
+```bash
+uv run python ToolCalling/self_made_tool.py
+```
+
 Create the Chroma database from the deep-learning PDF:
 
 ```bash
@@ -784,6 +812,7 @@ python Runnables/sequence_runnable.py
 python Runnables/parallel_runnable.py
 python Runnables/runnable_passthrough.py
 python ToolCalling/news_summarizer.py
+python ToolCalling/self_made_tool.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
