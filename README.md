@@ -68,6 +68,7 @@ This repository is actively being developed as a learning project.
 - A Streamlit app for uploading and chatting with PDFs in `RAG/app.py`
 - A LangChain runnable sequence using prompt, model, and output parser
 - A parallel LangChain runnable with short and detailed response branches
+- A passthrough runnable that forwards generated code for explanation
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -93,8 +94,8 @@ This repository is actively being developed as a learning project.
   Hugging Face models
 - [x] **RAG:** Document loading, text splitting, embeddings, vector stores,
   MMR retrieval, and PDF question answering
-- [x] **Runnables:** Composable LangChain prompt-model-parser sequences and
-  parallel branches
+- [x] **Runnables:** Composable LangChain prompt-model-parser sequences,
+  parallel branches, and passthrough data flow
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -424,6 +425,25 @@ uv run python Runnables/parallel_runnable.py
 
 This example requires `MISTRAL_API_KEY`.
 
+### Passthrough runnable composition
+
+[`Runnables/runnable_passthrough.py`](Runnables/runnable_passthrough.py)
+demonstrates how to combine sequential and parallel runnables:
+
+1. A Mistral-powered chain generates Python code for calculating a factorial.
+2. `RunnableParallel` preserves the generated code with
+   `RunnablePassthrough`.
+3. A second branch sends the code to an explanation prompt so the result
+   contains both the generated code and a plain-language explanation.
+
+Run it from the repository root with:
+
+```bash
+uv run python Runnables/runnable_passthrough.py
+```
+
+This example requires `MISTRAL_API_KEY`.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -512,7 +532,8 @@ Generative-AI/
 │   └── coreUI.py           # Streamlit movie extraction interface
 ├── Runnables/
 │   ├── sequence_runnable.py # Prompt-model-parser runnable sequence
-│   └── parallel_runnable.py # Parallel short and detailed response branches
+│   ├── parallel_runnable.py # Parallel short and detailed response branches
+│   └── runnable_passthrough.py # Preserve and explain generated code
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -673,6 +694,7 @@ Run the LangChain runnable examples:
 ```bash
 uv run python Runnables/sequence_runnable.py
 uv run python Runnables/parallel_runnable.py
+uv run python Runnables/runnable_passthrough.py
 ```
 
 Create the Chroma database from the deep-learning PDF:
@@ -729,6 +751,7 @@ python Embedding_Models/huggingface_embedding.py
 streamlit run CineSage/coreUI.py
 python Runnables/sequence_runnable.py
 python Runnables/parallel_runnable.py
+python Runnables/runnable_passthrough.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
