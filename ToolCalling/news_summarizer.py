@@ -5,3 +5,8 @@ from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
+search_tool = TavilySearchResults(max_results=5)
+
+llm = ChatMistralAI(
+    model="ministral-14b-latest"
+)
