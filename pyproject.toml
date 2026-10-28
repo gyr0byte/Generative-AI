@@ -22,6 +22,7 @@ dependencies = [
     "langchain-huggingface>=1.2.3",
     "langchain-mistralai>=1.1.6",
     "langchain-openai>=1.7.1",
+    "langchain-tavily>=0.2.18",
     "langgraph>=1.2.15",
     "pydantic>=2.14.1",
     "pypdf>=6.21.1",
