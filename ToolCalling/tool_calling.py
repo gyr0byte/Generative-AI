@@ -26,7 +26,8 @@ llm_with_tool = llm.bind_tools([get_text_length])
 
 messages = []
 
-query = HumanMessage(content="Please calculate the length of the following text: 'Hello, how are you doing today?'")
+prompt = input("You: ")
+query = HumanMessage(content=f"How many characters are in the text: '{prompt}'?")
 
 messages.append(query)
 
