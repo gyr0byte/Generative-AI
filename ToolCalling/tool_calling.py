@@ -28,3 +28,8 @@ tool_name = tool_call['name']
 tool_args = tool_call['args']
 
 tool_result = get_text_length.invoke(tool_args)
+
+final_result = llm_with_tool.invoke(f"The length of the text is: {tool_result}")
+
+print("Final Result:")
+print(final_result)
