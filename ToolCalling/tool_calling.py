@@ -13,6 +13,10 @@ def get_text_length(text: str) -> int:
     """ #docstring
     return len(text)
 
+tools ={
+    "get_text_length": get_text_length
+}
+
 llm = ChatMistralAI(
     model="ministral-14b-latest"
 )
@@ -27,5 +31,13 @@ query = HumanMessage(content="Please calculate the length of the following text:
 messages.append(query)
 
 result = llm_with_tool.invoke(messages)
-print("Result from LLM with tool:")
-print(result)
+
+messages.append(result)
+
+if result.tool_calls:
+    tool_name = result.tool_calls[0]['name']
+    tool_message = tools[tool_name].invoke(result.tool_calls[0])
+    messages.append(tool_message)
+    
+result = llm_with_tool.invoke(messages)
+print(result.content)
