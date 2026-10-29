@@ -20,5 +20,12 @@ llm = ChatMistralAI(
 # tool binding
 llm_with_tool = llm.bind_tools([get_text_length])
 
+messages = []
+
 query = HumanMessage(content="Please calculate the length of the following text: 'Hello, how are you doing today?'")
 
+messages.append(query)
+
+result = llm_with_tool.invoke(messages)
+print("Result from LLM with tool:")
+print(result)
