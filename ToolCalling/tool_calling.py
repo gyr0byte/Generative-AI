@@ -4,6 +4,7 @@ load_dotenv()
 from langchain_mistralai import ChatMistralAI
 from langchain.tools import tool
 from rich import print
+from langchain_core.messages import HumanMessage
 
 #1 Creating a tool
 @tool
@@ -19,13 +20,5 @@ llm = ChatMistralAI(
 # tool binding
 llm_with_tool = llm.bind_tools([get_text_length])
 
-result = llm_with_tool.invoke("Use the get_text_length tool to find the length of the following text: 'Hello, this is a sample text for testing the tool.'")
+query = HumanMessage(content="Please calculate the length of the following text: 'Hello, how are you doing today?'")
 
-if result.tool_calls:
-    tool_call = result.tool_calls[0]
-    tool_result = get_text_length.invoke(tool_call['args'])
-
-    final_result = llm_with_tool.invoke(f"The length of the text is: {tool_result}")
-
-    print("Final Result:")
-    print(final_result.content)
