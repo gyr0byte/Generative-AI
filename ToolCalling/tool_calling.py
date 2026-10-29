@@ -19,9 +19,6 @@ llm = ChatMistralAI(
 # tool binding
 llm_with_tool = llm.bind_tools([get_text_length])
 
-result = llm.invoke("Hello, how are you?")
-result2 = llm_with_tool.invoke("Hello, how are you?")
+result = llm_with_tool.invoke("Return the length of this text: Hello, how are you?")
 
 print(result)
-print("="*32)
-print(result2)
