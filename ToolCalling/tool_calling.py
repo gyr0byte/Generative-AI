@@ -21,4 +21,10 @@ llm_with_tool = llm.bind_tools([get_text_length])
 
 result = llm_with_tool.invoke("Return the length of this text: Hello, how are you?")
 
-print(result)
+if result.tool_calls:
+    tool_call = result.tool_calls[0]
+    
+tool_name = tool_call['name']
+tool_args = tool_call['args']
+
+tool_result = get_text_length.invoke(tool_args)
