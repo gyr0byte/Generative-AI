@@ -57,7 +57,7 @@ def get_news(city: str) -> str:
     for r in results:
         title = r.get("title", "No title")
         url = r.get("url", "")
-        snippet = r.get("snippet", "No snippet")
+        snippet = r.get("snippet", "")
         
         
         news_list.append(
@@ -65,5 +65,14 @@ def get_news(city: str) -> str:
         )
         
     return f"Latest news for {city}:\n\n" + "\n\n".join(news_list)
+
+print(get_news.invoke("Kathmandu"))
     
-    
+llm = ChatMistralAI(
+    model="ministral-14b-latest"
+)
+
+tools = {
+    "get_weather": get_weather,
+    "get_news": get_news
+}  
