@@ -14,8 +14,12 @@ from tavily import TavilyClient
 # Now let's create some tools
 
 # Weather tool
-API_KEY = os.getenv("OPENWEATHER_API_KEY")
+
 @tool
 def get_weather(city: str) -> str:
     """Get the current weather for a given city."""
-    url = 
+    API_KEY = os.getenv("OPENWEATHER_API_KEY")
+    url = url = f"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={API_KEY}&units=metric"
+    
+    response = requests.get(url)
+    data = response.json()
