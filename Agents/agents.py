@@ -45,13 +45,25 @@ def get_news(city: str) -> str:
     """Latest news about the city"""
 
     query = f"latest news on {city}"
-    response = tavily_client.search(query, max_results=5)
+    response = tavily_client.search(query, max_results=3)
     
     results = response.get("results", [])
     
     if not results:
         return f"No news found for {city}."
     
-    formatted_news = f"Latest news on {city}:\n"
+    news_list = []
+    
+    for r in results:
+        title = r.get("title", "No title")
+        url = r.get("url", "")
+        snippet = r.get("snippet", "No snippet")
+        
+        
+        news_list.append(
+            f"Title: {title}\nURL: {url}\nSnippet: {snippet}"
+        )
+        
+    return f"Latest news for {city}:\n\n" + "\n\n".join(news_list)
     
     
