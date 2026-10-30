@@ -89,3 +89,14 @@ while True:
     if user_input.lower() == "exit":
         print("Exiting the agent. Goodbye!")
         break
+    
+    messages.append(HumanMessage(content=user_input))
+
+    while True:
+        result = llm_with_tools.invoke(messages)
+        messages.append(result)
+        
+        #if tool is required 
+        
+        if result.tool_calls:
+            for tool_call in result.tool_calls:
