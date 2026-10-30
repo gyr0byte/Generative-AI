@@ -31,3 +31,5 @@ def get_weather(city: str) -> str:
     desc = data["weather"][0]["description"]
     
     return f"The current weather in {city} is {temp}°C with {desc}."
+
+print(get_weather.invoke("Kathmandu"))
