@@ -75,4 +75,17 @@ llm = ChatMistralAI(
 tools = {
     "get_weather": get_weather,
     "get_news": get_news
-}  
+} 
+
+llm_with_tools = llm.bind_tools(tools) 
+
+# Agent LOOP - Very important
+messages = []
+print("City Intelligence Agent")
+print("Type 'exit' to quit.")
+
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "exit":
+        print("Exiting the agent. Goodbye!")
+        break
