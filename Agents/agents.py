@@ -19,9 +19,10 @@ from tavily import TavilyClient
 def get_weather(city: str) -> str:
     """Get the current weather for a given city."""
     API_KEY = os.getenv("OPENWEATHER_API_KEY")
-    url = url = f"http://api.openweathermap.org/data/2.5/weather?q={city},IN&appid={API_KEY}&units=metric"
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {"q": city, "appid": API_KEY, "units": "metric"}
     
-    response = requests.get(url)
+    response = requests.get(url, params=params, timeout=10)
     data = response.json()
     
     if str(data.get("cod")) != "200":
