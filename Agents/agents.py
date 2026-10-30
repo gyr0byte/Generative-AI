@@ -34,3 +34,24 @@ def get_weather(city: str) -> str:
     return f"The current weather in {city} is {temp}°C with {desc}."
 
 print(get_weather.invoke("Kathmandu"))
+
+
+# Tavily News tool
+
+tavily_client = TavilyClient()
+
+@tool
+def get_news(city: str) -> str:
+    """Latest news about the city"""
+
+    query = f"latest news on {city}"
+    response = tavily_client.search(query, max_results=5)
+    
+    results = response.get("results", [])
+    
+    if not results:
+        return f"No news found for {city}."
+    
+    formatted_news = f"Latest news on {city}:\n"
+    
+    
