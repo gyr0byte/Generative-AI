@@ -23,3 +23,11 @@ def get_weather(city: str) -> str:
     
     response = requests.get(url)
     data = response.json()
+    
+    if str(data.get("cod")) != "200":
+        return f"Error: {data.get('message', 'Unable to fetch weather data.')}"
+    
+    temp = data["main"]["temp"]
+    desc = data["weather"][0]["description"]
+    
+    return f"The current weather in {city} is {temp}°C with {desc}."
