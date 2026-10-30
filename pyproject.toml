@@ -30,6 +30,7 @@ dependencies = [
     "requests>=2.32.5,<2.33.dev0",
     "sentence-transformers>=6.1.0",
     "streamlit>=1.66.0",
+    "tavily>=1.1.0",
     "tiktoken>=0.14.0",
     "torch>=2.14.1",
     "torchvision>=0.29.1",
