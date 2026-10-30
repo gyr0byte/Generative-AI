@@ -71,6 +71,7 @@ This repository is actively being developed as a learning project.
 - A passthrough runnable that forwards generated code for explanation
 - A Tavily-powered news search and Mistral summarization example
 - A custom LangChain tool created with the `@tool` decorator
+- A Mistral tool-calling example that binds and executes a custom tool
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -101,6 +102,8 @@ This repository is actively being developed as a learning project.
 - [x] **Web search and summarization:** Search current articles with Tavily
   and summarize results with Mistral
 - [x] **Custom tools:** Define, invoke, and inspect a typed LangChain tool
+- [x] **Tool calling:** Bind a custom tool to Mistral and execute returned
+  tool calls
 - [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
   and external APIs
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
@@ -487,6 +490,25 @@ uv run python ToolCalling/self_made_tool.py
 
 This example runs locally and does not require an API key.
 
+### Model-driven tool calling
+
+[`ToolCalling/tool_calling.py`](ToolCalling/tool_calling.py) demonstrates a
+complete tool-calling loop with Mistral:
+
+1. Defines `get_text_length` as a typed LangChain tool.
+2. Binds the tool to `ChatMistralAI`.
+3. Accepts text from the terminal.
+4. Lets the model request the tool and manually executes the returned call.
+5. Sends the tool result back to Mistral and prints the final answer.
+
+Run it from the repository root:
+
+```bash
+uv run python ToolCalling/tool_calling.py
+```
+
+This example requires `MISTRAL_API_KEY` and an interactive terminal.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -521,6 +543,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Retrieval:** Similarity search, MMR, and multi-query retrieval
 - **Composition:** LangChain Expression Language (LCEL) runnables
 - **Web search:** Tavily search tools
+- **Tool calling:** LangChain tool binding and tool-call execution
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -580,7 +603,8 @@ Generative-AI/
 │   └── runnable_passthrough.py # Preserve and explain generated code
 ├── ToolCalling/
 │   ├── news_summarizer.py   # Tavily search and Mistral news summarization
-│   └── self_made_tool.py    # Custom greeting tool with @tool
+│   ├── self_made_tool.py    # Custom greeting tool with @tool
+│   └── tool_calling.py       # Mistral custom-tool calling loop
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -756,6 +780,12 @@ Run the custom LangChain tool example:
 uv run python ToolCalling/self_made_tool.py
 ```
 
+Run the Mistral tool-calling example:
+
+```bash
+uv run python ToolCalling/tool_calling.py
+```
+
 Create the Chroma database from the deep-learning PDF:
 
 ```bash
@@ -813,6 +843,7 @@ python Runnables/parallel_runnable.py
 python Runnables/runnable_passthrough.py
 python ToolCalling/news_summarizer.py
 python ToolCalling/self_made_tool.py
+python ToolCalling/tool_calling.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
