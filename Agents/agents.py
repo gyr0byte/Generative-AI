@@ -112,3 +112,13 @@ while True:
                 # execute the tool
                 tool_result = tools[tool_name].invoke(tool_call["args"])
                 
+                messages.append(ToolMessage(
+                    content=tool_result, 
+                    tool_name=tool_name,
+                    tool_call_id=tool_call["id"]
+                ))
+                
+            continue  # Continue to the next iteration to process the tool results
+        
+        else:
+            print(f"Agent: {result.content}")
