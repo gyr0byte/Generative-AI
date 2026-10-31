@@ -33,7 +33,7 @@ def get_weather(city: str) -> str:
     
     return f"The current weather in {city} is {temp}°C with {desc}."
 
-print(get_weather.invoke("Kathmandu"))
+print(get_weather.invoke({"city": "Kathmandu"}))
 
 
 # Tavily News tool
@@ -57,16 +57,16 @@ def get_news(city: str) -> str:
     for r in results:
         title = r.get("title", "No title")
         url = r.get("url", "")
-        snippet = r.get("snippet", "")
+        content = r.get("content", "")
         
         
         news_list.append(
-            f"Title: {title}\nURL: {url}\nSnippet: {snippet}"
+            f"Title: {title}\nURL: {url}\nContent: {content}"
         )
         
     return f"Latest news for {city}:\n\n" + "\n\n".join(news_list)
 
-print(get_news.invoke("Kathmandu"))
+print(get_news.invoke({"city": "Kathmandu"}))
     
 llm = ChatMistralAI(
     model="ministral-14b-latest"
@@ -77,7 +77,7 @@ tools = {
     "get_news": get_news
 } 
 
-llm_with_tools = llm.bind_tools(tools) 
+llm_with_tools = llm.bind_tools(list(tools.values())) 
 
 # Agent LOOP - Very important
 messages = []
@@ -100,3 +100,15 @@ while True:
         
         if result.tool_calls:
             for tool_call in result.tool_calls:
+                tool_name = tool_call['name']
+
+                #humnan in the loop
+                confirm = input(f"Agents wants to call {tool_name}, Approve? (yes/no): ")
+                
+                if confirm.lower() == "no":
+                    print(f"Tool call to {tool_name} was not approved.")
+                    break
+                
+                # execute the tool
+                tool_result = tools[tool_name].invoke(tool_call["args"])
+                
