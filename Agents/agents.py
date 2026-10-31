@@ -105,16 +105,16 @@ while True:
                 #humnan in the loop
                 confirm = input(f"Agents wants to call {tool_name}, Approve? (yes/no): ")
                 
-                if confirm.lower() == "no":
-                    print(f"Tool call to {tool_name} was not approved.")
-                    break
+                if confirm.lower().strip() in ("yes", "y"):
+                    tool_result = tools[tool_name].invoke(tool_call["args"])
+                else:
+                    tool_result = "The user denied permission to execute this tool."
                 
                 # execute the tool
                 tool_result = tools[tool_name].invoke(tool_call["args"])
                 
                 messages.append(ToolMessage(
-                    content=tool_result, 
-                    tool_name=tool_name,
+                    content=str(tool_result),
                     tool_call_id=tool_call["id"]
                 ))
                 
@@ -122,3 +122,4 @@ while True:
         
         else:
             print(f"Agent: {result.content}")
+            break
