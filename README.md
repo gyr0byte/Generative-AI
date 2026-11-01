@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![LangChain](https://img.shields.io/badge/LangChain-🦜🔗-1C3C3C)](https://www.langchain.com/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)](#current-status)
+[![Status](https://img.shields.io/badge/Status-Completed-brightgreen)](#current-status)
 
 ---
 
@@ -48,7 +48,9 @@ focuses on applying those concepts with LangChain and provider APIs.
 
 ## Current Status
 
-This repository is actively being developed as a learning project.
+This learning repository is complete. It contains working examples covering
+chat models, embeddings, RAG, runnable composition, tool calling, and
+autonomous agents.
 
 ### Implemented
 
@@ -78,7 +80,7 @@ This repository is actively being developed as a learning project.
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
   FastAPI
 
-### Planned
+### Future extensions
 
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
@@ -106,7 +108,7 @@ This repository is actively being developed as a learning project.
   tool calls
 - [x] **AI agents:** Tool-enabled agent loops with weather, news, and
   human-approval middleware
-- [ ] **Own project:** RAG over my ML-Foundations notebooks
+- [x] **Own project:** RAG over my ML-Foundations notebooks
 
 ## Available Examples
 
@@ -574,7 +576,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Configuration:** `python-dotenv`
 - **Package management:** `uv`
 
-### Declared for upcoming examples
+### Available for future extensions
 
 - **Vector search:** FAISS for future experiments
 - **Agent orchestration:** LangGraph
@@ -582,12 +584,12 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **HTTP requests:** Requests
 - **Additional providers:** OpenAI
 
-OpenWeather is part of the planned learning roadmap but is not currently used
-by the implementation in this repository.
+OpenWeather is used by the autonomous agent example. The remaining declared
+providers and libraries are available for future extensions.
 
 ## How RAG Fits Together
 
-The planned RAG examples will follow this general flow:
+The RAG examples in this repository follow this general flow:
 
 ```mermaid
 flowchart LR
@@ -898,7 +900,7 @@ variables:
 | `GROQ_API_KEY` | Yes | Groq chat model |
 | `GOOGLE_API_KEY` | Yes | Google Gemini chat model |
 | `MISTRAL_API_KEY` | Yes | Mistral chat model |
-| `OPENAI_API_KEY` | No | Planned OpenAI examples |
+| `OPENAI_API_KEY` | No | Optional OpenAI integrations |
 | `HUGGINGFACEHUB_API_TOKEN` | Yes for `huggingface.py` | Hugging Face hosted inference |
 | `TAVILY_API_KEY` | Yes for `ToolCalling/news_summarizer.py` | Tavily web search |
 | `OPENWEATHER_API_KEY` | Yes for `Agents/autonomous_agents.py` | OpenWeatherMap weather data |
