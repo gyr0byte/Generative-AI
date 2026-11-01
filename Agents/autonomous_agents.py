@@ -3,6 +3,7 @@ from tavily import TavilyClient
 from langchain_core.messages import HumanMessage, ToolMessage
 from langchain.tools import tool
 from langchain_mistralai import ChatMistralAI
+from langchain.agents import create_agent
 import requests
 import os
 from pathlib import Path
@@ -71,4 +72,10 @@ def get_news(city: str) -> str:
 
 llm = ChatMistralAI(
     model="ministral-14b-latest"
+)
+
+agent = create_agent(
+    llm=llm,
+    tools=[get_weather, get_news],
+    system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
 )
