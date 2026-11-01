@@ -1,6 +1,7 @@
 # First Step - loading all the libraries
+from langchain_core.messages import ToolMessage
 from tavily import TavilyClient
-from langchain_core.messages import HumanMessage, ToolMessage
+from langchain.agents.middleware import wrap_tool_call
 from langchain.tools import tool
 from langchain_mistralai import ChatMistralAI
 from langchain.agents import create_agent
@@ -79,6 +80,18 @@ agent = create_agent(
     tools=[get_weather, get_news],
     system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
 )
+
+@wrap_tool_call
+def human_approval(request, handler):
+    """Ask for human approval before executing a tool call."""
+    tool_name = request.tool_call["name"]
+    confirm = input(f"Do you want to execute the tool '{tool_name}'? (yes/no): ")
+    
+    if confirm.lower() == "yes":
+        return ToolMessage(
+            content = "Tool call approved. Executing...",
+            tool_call_id = request.tool_call["id"]
+        )
 
 print("Agent is ready to assist you! Type 'exit' to quit.")
 
