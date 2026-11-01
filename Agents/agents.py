@@ -35,7 +35,6 @@ def get_weather(city: str) -> str:
     return f"The current weather in {city} is {temp}°C with {desc}."
 
 
-print(get_weather.invoke({"city": "Kathmandu"}))
 
 
 # Tavily News tool
@@ -69,7 +68,6 @@ def get_news(city: str) -> str:
     return f"Latest news for {city}:\n\n" + "\n\n".join(news_list)
 
 
-print(get_news.invoke({"city": "Kathmandu"}))
 
 llm = ChatMistralAI(
     model="ministral-14b-latest"
