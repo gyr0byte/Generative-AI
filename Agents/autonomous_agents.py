@@ -75,7 +75,7 @@ llm = ChatMistralAI(
 )
 
 agent = create_agent(
-    llm=llm,
+    model=llm,
     tools=[get_weather, get_news],
     system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
 )
@@ -91,4 +91,4 @@ while True:
     result = agent.invoke({
         "messages" : [{"role": "user", "content": user_input}]
     })
-    print(f"Agent: {result['output']}")
+    print(f"Agent: {result['messages'][-1].content}")
