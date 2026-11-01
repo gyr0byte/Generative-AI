@@ -75,12 +75,6 @@ llm = ChatMistralAI(
     model="ministral-14b-latest"
 )
 
-agent = create_agent(
-    model=llm,
-    tools=[get_weather, get_news],
-    system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
-)
-
 @wrap_tool_call
 def human_approval(request, handler):
     """Ask for human approval before executing a tool call."""
@@ -92,6 +86,15 @@ def human_approval(request, handler):
             content = "Tool call approved. Executing...",
             tool_call_id = request.tool_call["id"]
         )
+        
+    return handler(request)
+
+agent = create_agent(
+    model=llm,
+    tools=[get_weather, get_news],
+    system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
+    middleware=[human_approval]
+)
 
 print("Agent is ready to assist you! Type 'exit' to quit.")
 
