@@ -72,6 +72,7 @@ This repository is actively being developed as a learning project.
 - A Tavily-powered news search and Mistral summarization example
 - A custom LangChain tool created with the `@tool` decorator
 - A Mistral tool-calling example that binds and executes a custom tool
+- An interactive autonomous agent with weather and news tools
 - Environment-variable loading with `python-dotenv`
 - Dependency management with `uv`
 - Project configuration for LangChain, LangGraph, Hugging Face, FAISS, and
@@ -79,7 +80,6 @@ This repository is actively being developed as a learning project.
 
 ### Planned
 
-- LangGraph-based agents and model-driven tool calling
 - FastAPI examples
 - RAG over the notebooks from ML-Foundations
 
@@ -104,8 +104,8 @@ This repository is actively being developed as a learning project.
 - [x] **Custom tools:** Define, invoke, and inspect a typed LangChain tool
 - [x] **Tool calling:** Bind a custom tool to Mistral and execute returned
   tool calls
-- [ ] **AI agents:** Tool calling, agent loops, human-in-the-loop workflows,
-  and external APIs
+- [x] **AI agents:** Tool-enabled agent loops with weather, news, and
+  human-approval middleware
 - [ ] **Own project:** RAG over my ML-Foundations notebooks
 
 ## Available Examples
@@ -509,6 +509,28 @@ uv run python ToolCalling/tool_calling.py
 
 This example requires `MISTRAL_API_KEY` and an interactive terminal.
 
+### Autonomous tool-using agent
+
+[`Agents/autonomous_agents.py`](Agents/autonomous_agents.py) demonstrates an
+interactive Mistral agent built with LangChain's `create_agent`. The agent can
+choose between two tools:
+
+- `get_weather` fetches current weather from OpenWeatherMap.
+- `get_news` searches recent city news with Tavily.
+
+The example also adds middleware that asks for confirmation before a tool call
+is handled. Enter requests such as `What is the weather in Kathmandu?` or
+`What is the latest news from Pokhara?`; type `exit` to stop the session.
+
+Run it from the repository root:
+
+```bash
+uv run python Agents/autonomous_agents.py
+```
+
+This example requires `MISTRAL_API_KEY`, `OPENWEATHER_API_KEY`,
+`TAVILY_API_KEY`, internet access, and an interactive terminal.
+
 ### CineSage movie intelligence
 
 [`CineSage/core.py`](CineSage/core.py) defines the validated movie extraction
@@ -544,6 +566,7 @@ This example requires `GROQ_API_KEY` and a browser for the Streamlit interface.
 - **Composition:** LangChain Expression Language (LCEL) runnables
 - **Web search:** Tavily search tools
 - **Tool calling:** LangChain tool binding and tool-call execution
+- **Agents:** LangChain `create_agent` with tool middleware
 - **Structured output:** Pydantic models with LangChain
 - **Document loading:** PDF, web-page, and text loaders from LangChain
 - **Interactive CLI:** Python terminal input
@@ -605,6 +628,8 @@ Generative-AI/
 │   ├── news_summarizer.py   # Tavily search and Mistral news summarization
 │   ├── self_made_tool.py    # Custom greeting tool with @tool
 │   └── tool_calling.py       # Mistral custom-tool calling loop
+├── Agents/
+│   └── autonomous_agents.py  # Weather/news agent with approval middleware
 ├── RAG/
 │   ├── create_database.py  # PDF chunks to a local Chroma database
 │   ├── app.py              # Streamlit upload-and-chat PDF RAG app
@@ -786,6 +811,12 @@ Run the Mistral tool-calling example:
 uv run python ToolCalling/tool_calling.py
 ```
 
+Run the autonomous weather and news agent:
+
+```bash
+uv run python Agents/autonomous_agents.py
+```
+
 Create the Chroma database from the deep-learning PDF:
 
 ```bash
@@ -844,6 +875,7 @@ python Runnables/runnable_passthrough.py
 python ToolCalling/news_summarizer.py
 python ToolCalling/self_made_tool.py
 python ToolCalling/tool_calling.py
+python Agents/autonomous_agents.py
 python RAG/main.py
 streamlit run RAG/app.py
 python RAG/create_database.py
@@ -869,7 +901,7 @@ variables:
 | `OPENAI_API_KEY` | No | Planned OpenAI examples |
 | `HUGGINGFACEHUB_API_TOKEN` | Yes for `huggingface.py` | Hugging Face hosted inference |
 | `TAVILY_API_KEY` | Yes for `ToolCalling/news_summarizer.py` | Tavily web search |
-| `OPENWEATHER_API_KEY` | No | Planned weather tools |
+| `OPENWEATHER_API_KEY` | Yes for `Agents/autonomous_agents.py` | OpenWeatherMap weather data |
 | `LANGCHAIN_API_KEY` | No | Optional LangSmith tracing |
 
 The local example in `localmodel.py` does not require an API key. It downloads
@@ -891,6 +923,9 @@ require an API key, but it does require the configured CUDA environment.
 
 The news summarizer requires both `TAVILY_API_KEY` and `MISTRAL_API_KEY`, plus
 internet access for the live search.
+
+The autonomous agent requires `MISTRAL_API_KEY`, `OPENWEATHER_API_KEY`, and
+`TAVILY_API_KEY`. It also needs internet access to call both external APIs.
 
 ## Troubleshooting
 
