@@ -79,3 +79,16 @@ agent = create_agent(
     tools=[get_weather, get_news],
     system_prompt="You are a helpful assistant that can provide weather information and the latest news for a given city.",
 )
+
+print("Agent is ready to assist you! Type 'exit' to quit.")
+
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "exit":
+        print("Goodbye!")
+        break
+    
+    result = agent.invoke({
+        "messages" : [{"role": "user", "content": user_input}]
+    })
+    print(f"Agent: {result['output']}")
