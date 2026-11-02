@@ -191,7 +191,7 @@ with st.sidebar:
     st.caption("Recent headlines from the web")
     st.divider()
     st.markdown("#### Session")
-    st.success("Agent online", icon="✦")
+    st.success("Agent online", icon="✅")
     if st.button("🗑️ Clear conversation", use_container_width=True):
         _reset_conversation()
         st.rerun()
