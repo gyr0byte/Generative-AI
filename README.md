@@ -20,6 +20,7 @@
 - [How RAG Fits Together](#how-rag-fits-together)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
+- [Autonomous Agents UI](#autonomous-agents-ui)
 - [Environment Variables](#environment-variables)
 - [Troubleshooting](#troubleshooting)
 - [Security Note](#security-note)
@@ -1084,11 +1085,35 @@ This project is licensed under the MIT License. See
 <p align="center"><i>Not a person, a process: always building, never stopping.</i></p>
 ## Autonomous Agents UI
 
-Run the city intelligence agent UI from the repository root:
+The autonomous agent has a separate premium Streamlit interface in
+[`Agents/autonomous_agents_ui.py`](Agents/autonomous_agents_ui.py). It provides a
+dark glassmorphism workspace for asking questions about any city.
+
+### Launch
+
+Run the following command from the repository root:
 
 ```powershell
 uv run streamlit run Agents/autonomous_agents_ui.py
 ```
 
-Configure `MISTRAL_API_KEY` and, for tool-backed answers, `OPENWEATHER_API_KEY`
-and `TAVILY_API_KEY` in `.env`.
+### Features
+
+- 🌤️ Live weather lookup through OpenWeatherMap
+- 📰 Recent city news through Tavily
+- 💬 Persistent chat history during the Streamlit session
+- 🗑️ Clear-conversation control in the sidebar
+- 📱 Responsive premium layout with welcome cards and status indicators
+
+Configure these variables in the repository `.env` file before launching:
+
+```dotenv
+MISTRAL_API_KEY=your_mistral_api_key
+OPENWEATHER_API_KEY=your_openweathermap_api_key
+TAVILY_API_KEY=your_tavily_api_key
+```
+
+`MISTRAL_API_KEY` is required for the model. The weather and news keys are
+required when the corresponding tools are used. The existing terminal version
+in [`Agents/autonomous_agents.py`](Agents/autonomous_agents.py) remains
+unchanged.
