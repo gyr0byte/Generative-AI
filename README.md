@@ -1082,3 +1082,13 @@ This project is licensed under the MIT License. See
 ---
 
 <p align="center"><i>Not a person, a process: always building, never stopping.</i></p>
+## Autonomous Agents UI
+
+Run the city intelligence agent UI from the repository root:
+
+```powershell
+uv run streamlit run Agents/autonomous_agents_ui.py
+```
+
+Configure `MISTRAL_API_KEY` and, for tool-backed answers, `OPENWEATHER_API_KEY`
+and `TAVILY_API_KEY` in `.env`.
